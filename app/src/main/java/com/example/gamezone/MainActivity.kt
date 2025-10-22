@@ -3,45 +3,37 @@ package com.example.gamezone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.gamezone.ui.theme.GameZoneTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.gamezone.navigation.Route
+import com.example.gamezone.views.LoginView
+import com.example.gamezone.views.MenuShellView
+import com.example.gamezone.views.WelcomeView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            GameZoneTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            Surface(color = MaterialTheme.colorScheme.background) {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Route.Welcome.route
+                ) {
+                    composable(Route.Welcome.route) {
+                        WelcomeView(
+                            onStartClick = { navController.navigate(Route.MenuShell.route) }
+                        )
+                    }
+                    // MenuShell incluye su propio NavHost interno para Option1/2/3
+                    composable(Route.MenuShell.route) {
+                        MenuShellView()
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GameZoneTheme {
-        Greeting("Android")
     }
 }
