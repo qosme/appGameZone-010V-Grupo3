@@ -1,0 +1,99 @@
+package com.example.gamezone.data
+
+import kotlinx.coroutines.flow.Flow
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class UserRepository @Inject constructor(
+    private val userDao: UserDao
+) {
+    suspend fun getUserByCredentials(email: String, password: String): User? {
+        return userDao.getUserByCredentials(email, password)
+    }
+
+    suspend fun getUserByEmail(email: String): User? {
+        val normalizedEmail = email.trim().lowercase(Locale.getDefault())
+        return userDao.getUserByEmail(normalizedEmail)
+    }
+
+    fun getAllUsers(): Flow<List<User>> {
+        return userDao.getAllUsers()
+    }
+
+    suspend fun insertUser(user: User) {
+        userDao.insertUser(user)
+    }
+
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
+    suspend fun deleteUser(user: User) {
+        userDao.deleteUser(user)
+    }
+
+    suspend fun deleteUserByEmail(email: String) {
+        userDao.deleteUserByEmail(email)
+    }
+
+    suspend fun validateLogin(email: String, password: String): Boolean {
+        val user = getUserByCredentials(email, password)
+        return user != null
+    }
+
+    suspend fun registerUser(email: String, password: String, name: String, phone: String = ""): Boolean {
+        val normalizedEmail = email.trim().lowercase(Locale.getDefault())
+        val existingUser = getUserByEmail(normalizedEmail)
+        if (existingUser != null) return false
+        val newUser = User(
+            email = normalizedEmail,
+            password = password,
+            name = name,
+            phone = phone
+        )
+        insertUser(newUser)
+        return true
+    }
+
+    suspend fun updateUserProfile(email: String, name: String, phone: String, bio: String): Boolean {
+        return try {
+            userDao.updateUserProfile(email, name, phone, bio, System.currentTimeMillis())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun updateUserProfilePicture(email: String, profilePictureUri: String?): Boolean {
+        return try {
+            userDao.updateUserProfilePicture(email, profilePictureUri, System.currentTimeMillis())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun makeUserAdmin(email: String): Boolean {
+        return try {
+            userDao.updateUserAdminStatus(email, true, System.currentTimeMillis())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun removeUserAdmin(email: String): Boolean {
+        return try {
+            userDao.updateUserAdminStatus(email, false, System.currentTimeMillis())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun getAllAdmins(): Flow<List<User>> {
+        return userDao.getAllAdmins()
+    }
+}
