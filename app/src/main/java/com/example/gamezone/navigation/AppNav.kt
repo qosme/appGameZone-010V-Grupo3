@@ -17,4 +17,12 @@ sealed class Route(val route: String) {
     data object Option5 : Route("option5")
 
     data object Login : Route("Login")
+    data object Registro : Route("Registro")
+    data object Cart : Route("Cart")
+    data object Checkout : Route("Checkout")
+    data object Profile : Route("profile") {
+        fun build(email: String) = "profile/$email"
+    }
+    data object AdminProfile : Route("AdminProfile")
+    data object AddGame : Route("AddGame")
 }

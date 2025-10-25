@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,17 +26,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamezone.viewModels.LoginViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginView(
-    vm: LoginViewModel = viewModel()) {
+    vm: LoginViewModel = hiltViewModel(),
+    onLoginSuccess: (String) -> Unit = {},   // <-- email parameter
+    onNavigateToSignUp: () -> Unit = {}
+) {
     val state = vm.estado.collectAsState().value
     val errors = vm.errores.collectAsState().value
+    val isLoading = vm.isLoading.collectAsState().value
+    val loginResult = vm.loginResult.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    // Handle login result
+    LaunchedEffect(loginResult) {
+        loginResult?.let { result ->
+            snackbarHostState.showSnackbar(result)
+            if (result == "Login exitoso") {
+                onLoginSuccess(state.correo)  //  pass the logged-in email
+                vm.reset()
+            }
+        }
+    }
+
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -47,7 +65,7 @@ fun LoginView(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Formulario con validación", style = MaterialTheme.typography.titleLarge)
+            Text("Iniciar Sesión", style = MaterialTheme.typography.titleLarge)
 
             // EMAIL
             OutlinedTextField(
@@ -64,11 +82,11 @@ fun LoginView(
             OutlinedTextField(
                 value = state.clave,
                 onValueChange = vm::onClaveChange,
-                label = { Text(text = "Contraseña") },
+                label = { Text(text = "Contraseña *") },
                 visualTransformation = PasswordVisualTransformation(),
-                isError = state.errores.clave != null,
+                isError = errors.clave != null,
                 supportingText = {
-                    state.errores.clave?.let {
+                    errors.clave?.let {
                         Text(text = it, color = MaterialTheme.colorScheme.error)
                     }
                 },
@@ -84,26 +102,22 @@ fun LoginView(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = {
-                        val ok = vm.validate()
-                        if (ok) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Formulario válido. Enviando…")
-                            }
-                            // Simular envío y limpiar
-                            vm.reset()
-                        } else {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Revisa los campos resaltados.")
-                            }
-                        }
-                    }
+                    onClick = { vm.login() },
+                    enabled = !isLoading
                 ) {
-                    Text("Enviar")
+                    Text(if (isLoading) "Iniciando sesión..." else "Iniciar Sesión")
                 }
                 OutlinedButton(onClick = { vm.reset() }) {
                     Text("Limpiar")
                 }
+            }
+            
+            // Botón de registro
+            OutlinedButton(
+                onClick = { onNavigateToSignUp() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("¿No tienes cuenta? Regístrate")
             }
         }
     }

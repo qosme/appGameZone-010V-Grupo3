@@ -1,19 +1,33 @@
 package com.example.gamezone.viewModels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.gamezone.data.UserRepository
 import com.example.gamezone.models.UsuarioErrores
 import com.example.gamezone.models.UsuarioUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class UsuarioViewModel  : ViewModel() {
+@HiltViewModel
+class UsuarioViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private val _estado = MutableStateFlow(value = UsuarioUiState())
     val estado: StateFlow<UsuarioUiState> = _estado
 
     private val _errores = MutableStateFlow(UsuarioErrores())
     val errores: StateFlow<UsuarioErrores> = _errores
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _registrationResult = MutableStateFlow<String?>(null)
+    val registrationResult: StateFlow<String?> = _registrationResult
 
     fun onNombreChange(valor: String) {
         _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
@@ -68,8 +82,40 @@ class UsuarioViewModel  : ViewModel() {
     fun reset() {
         _estado.value = UsuarioUiState()
         _errores.value = UsuarioErrores()
+        _registrationResult.value = null
     }
 
+    fun register() {
+        if (!validate()) {
+            _registrationResult.value = "Revisa los campos resaltados."
+            return
+        }
 
+        _isLoading.value = true
+        _registrationResult.value = null
+
+        viewModelScope.launch {
+            try {
+                val state = _estado.value
+                val success = userRepository.registerUser(
+                    email = state.correo,
+                    password = state.clave,
+                    name = state.nombre,
+                    phone = state.telefono
+                )
+                
+                if (success) {
+                    _registrationResult.value = "Usuario registrado exitosamente"
+
+                } else {
+                    _registrationResult.value = "El usuario ya existe"
+                }
+            } catch (e: Exception) {
+                _registrationResult.value = "Error al registrar usuario: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
 }

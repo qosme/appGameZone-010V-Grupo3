@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.gamezone.navigation.Route
 import com.example.gamezone.viewModels.JuegosViewModel
@@ -29,9 +29,10 @@ import androidx.compose.ui.res.painterResource
 @Composable
 fun JuegosView(
     navController: NavController,
-    vm: JuegosViewModel = viewModel()
+    vm: JuegosViewModel = hiltViewModel()
 ) {
     val items = vm.items.collectAsState().value
+    val isLoading = vm.isLoading.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -55,47 +56,63 @@ fun JuegosView(
             )
             Spacer(Modifier.height(16.dp))
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                itemsIndexed(items) { index, item ->
-                    ElevatedCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("Abriendo detalle de $item")
-                                }
-                                navController.navigate(Route.JuegosDetalle.build(id = (index + 1).toString())) {
-                                    launchSingleTop = true
-                                    // Ejemplo de control de back stack:
-                                    popUpTo(Route.Juegos.route) { inclusive = false }
-                                }
-                            }
-                    ) {
-                        Row(
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    itemsIndexed(items) { index, item ->
+                        ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .clickable {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Abriendo detalle de ${item.name}")
+                                    }
+                                    navController.navigate(Route.JuegosDetalle.build(id = item.id)) {
+                                        launchSingleTop = true
+                                        // Ejemplo de control de back stack:
+                                        popUpTo(Route.Juegos.route) { inclusive = false }
+                                    }
+                                }
                         ) {
-                            // Display the image
-                            Image(
-                                painter = painterResource(id = item.imageResId),
-                                contentDescription = item.name,
+                            Row(
                                 modifier = Modifier
-                                    .size(64.dp) // Adjust as needed
-                                    .padding(end = 8.dp)
-                            )
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Display the image
+                                Image(
+                                    painter = painterResource(id = item.imageResId),
+                                    contentDescription = item.name,
+                                    modifier = Modifier
+                                        .size(64.dp) // Adjust as needed
+                                        .padding(end = 8.dp)
+                                )
 
-                            // Product name
-                            Text(item.name, style = MaterialTheme.typography.titleMedium)
+                                // Game info
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(item.name, style = MaterialTheme.typography.titleMedium)
+                                    Text(
+                                        text = "$${String.format("%.2f", item.price)}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = item.category,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
 
-                            // Spacer to push the next text to the right
-                            Spacer(Modifier.weight(1f))
-
-                            // "Ver detalle" label
-                            Text("Ver detalle", style = MaterialTheme.typography.labelLarge)
+                                // "Ver detalle" label
+                                Text("Ver detalle", style = MaterialTheme.typography.labelLarge)
+                            }
                         }
-
                     }
                 }
             }
@@ -109,8 +126,10 @@ fun JuegosView(
 @Composable
 fun JuegosDetalleView(
     id: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToCart: () -> Unit = {}
 ) {
+    // This will be replaced with the enhanced version
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
