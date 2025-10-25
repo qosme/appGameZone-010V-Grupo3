@@ -1,5 +1,6 @@
 package com.example.gamezone.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,36 +23,37 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdminProfileView(
     userEmail: String,
-    onBack: () -> Unit = {},
     onNavigateToAddGame: () -> Unit = {},
     vm: AdminProfileViewModel = hiltViewModel()
 ) {
-    val games = vm.games.collectAsState().value
-    val isLoading = vm.isLoading.collectAsState().value
+    // Collecting game state from ViewModel
+    val games by vm.games.collectAsState(initial = emptyList()) // Delegate for state
+    val isLoading by vm.isLoading.collectAsState(initial = false) // Delegate for loading state
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Load games on first composition
+    // Log the game list size to see if it updates correctly
+    LaunchedEffect(games) {
+        Log.d("AdminProfileView", "Games list updated: ${games.size} items")
+    }
+
+    // Only load games if the list is empty
     LaunchedEffect(Unit) {
-        vm.loadGames()
+        if (games.isEmpty()) {
+            Log.d("AdminProfileView", "Loading games as the list is empty.")
+            vm.loadGames()
+        }
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Panel de Administración") },
-                navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("← Volver")
-                    }
-                }
+                title = { Text("Panel de Administración") }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToAddGame
-            ) {
+            FloatingActionButton(onClick = onNavigateToAddGame) {
                 Icon(Icons.Default.Add, contentDescription = "Agregar Juego")
             }
         }
@@ -108,6 +110,7 @@ fun AdminProfileView(
                         }
                     }
 
+                    // Show loading spinner if data is loading
                     if (isLoading) {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
@@ -116,6 +119,7 @@ fun AdminProfileView(
                             CircularProgressIndicator()
                         }
                     } else if (games.isEmpty()) {
+                        // Show message if no games available
                         Box(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
@@ -126,10 +130,11 @@ fun AdminProfileView(
                             )
                         }
                     } else {
+                        // Show games list
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(games) { game ->
+                            items(games, key = { it.id }) { game ->
                                 GameManagementCard(
                                     game = game,
                                     onEdit = { /* TODO: Navigate to edit game */ },
@@ -156,6 +161,11 @@ fun AdminProfileView(
         }
     }
 }
+
+
+
+
+
 
 @Composable
 private fun GameManagementCard(

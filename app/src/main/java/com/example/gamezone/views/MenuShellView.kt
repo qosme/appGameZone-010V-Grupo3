@@ -76,6 +76,15 @@ fun MenuShellView(navController: NavController, userEmail: String,
                     }
                 )
 
+                NavigationDrawerItem(
+                    label = {Text("Administrador")},
+                    selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
+                    onClick = {
+                        innerNavController.navigate(Route.AdminProfile.route) {launchSingleTop = true }
+                        scope.launch { drawerState.close() }
+                    }
+                )
+
                 //NavigationDrawerItem(
                 //    label = { Text("Login") },
                 //    selected = false,
@@ -131,7 +140,7 @@ fun MenuShellView(navController: NavController, userEmail: String,
                 composable(Route.AdminProfile.route) {
                     AdminProfileView(
                         userEmail = userEmail,
-                        onBack = { innerNavController.navigateUp() },
+
                         onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }
                     )
                 }

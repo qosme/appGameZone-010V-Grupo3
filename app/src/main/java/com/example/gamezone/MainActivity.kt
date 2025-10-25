@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.example.gamezone.views.AdminProfileView
 import com.example.gamezone.views.CartView
 
 @AndroidEntryPoint
@@ -79,6 +80,13 @@ class MainActivity : ComponentActivity() {
                             userEmail = loggedInEmail ?: "sin-email@example.com",
                             //vm = cartViewModel,
                             onNavigateToCheckout = { navController.navigate(Route.Checkout.route) } // Navigate to checkout
+                        )
+                    }
+
+                    composable(Route.AdminProfile.route) {
+                        AdminProfileView(
+                            userEmail = loggedInEmail ?: "sin-email@example.com",
+                            onNavigateToAddGame = { navController.navigate(Route.AddGame.route) }
                         )
                     }
                 }
