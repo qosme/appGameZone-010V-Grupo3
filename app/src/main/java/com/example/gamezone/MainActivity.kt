@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.example.gamezone.views.CartView
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -69,6 +70,15 @@ class MainActivity : ComponentActivity() {
                         MenuShellView(
                             navController = navController,
                             userEmail = loggedInEmail ?: "sin-email@example.com"
+                        )
+                    }
+
+                    composable(Route.Cart.route) {
+                        // Pass the cart data to the CartView
+                        CartView(
+                            userEmail = loggedInEmail ?: "sin-email@example.com",
+                            //vm = cartViewModel,
+                            onNavigateToCheckout = { navController.navigate(Route.Checkout.route) } // Navigate to checkout
                         )
                     }
                 }

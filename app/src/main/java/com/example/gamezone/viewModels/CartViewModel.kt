@@ -1,6 +1,5 @@
 package com.example.gamezone.viewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamezone.data.CartItemWithGame
@@ -8,11 +7,8 @@ import com.example.gamezone.data.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onStart
 
 @HiltViewModel
 class CartViewModel @Inject constructor(

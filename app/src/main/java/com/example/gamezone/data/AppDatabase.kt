@@ -126,5 +126,8 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE users ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0")
             }
         }
+
+
+
     }
 }

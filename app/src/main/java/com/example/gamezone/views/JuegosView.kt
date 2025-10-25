@@ -99,7 +99,7 @@ fun JuegosView(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(item.name, style = MaterialTheme.typography.titleMedium)
                                     Text(
-                                        text = "$${String.format("%.2f", item.price)}",
+                                        text = "$${String.format("%.0f", item.price)}",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.primary
                                     )

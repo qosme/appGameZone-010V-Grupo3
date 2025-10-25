@@ -96,7 +96,7 @@ fun CheckoutView(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Text(
-                                    text = "$${String.format("%.2f", item.price * item.quantity)}",
+                                    text = "$${String.format("%.0f", item.price * item.quantity)}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -114,7 +114,7 @@ fun CheckoutView(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "$${String.format("%.2f", totalAmount)}",
+                                text = "$${String.format("%.0f", totalAmount)}",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary

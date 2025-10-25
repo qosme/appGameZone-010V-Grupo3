@@ -103,7 +103,7 @@ fun GameDetailView(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "$${String.format("%.2f", game.price)}",
+                        text = "$${String.format("%.0f", game.price)}",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold

@@ -68,16 +68,25 @@ fun MenuShellView(navController: NavController, userEmail: String,
                 )
 
                 NavigationDrawerItem(
-                    label = { Text("Login") },
-                    selected = false,
+                    label = {Text("Mi Carrito de Compras")},
+                    selected = currentInnerRoute(innerNavController) == Route.Cart.route,
                     onClick = {
-                        navController.navigate(Route.Login.route) {
-                            popUpTo(Route.MenuShell.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
+                        innerNavController.navigate(Route.Cart.route) {launchSingleTop = true }
                         scope.launch { drawerState.close() }
                     }
                 )
+
+                //NavigationDrawerItem(
+                //    label = { Text("Login") },
+                //    selected = false,
+                //    onClick = {
+                //        navController.navigate(Route.Login.route) {
+                //            popUpTo(Route.MenuShell.route) { inclusive = true }
+                //            launchSingleTop = true
+                //        }
+                //        scope.launch { drawerState.close() }
+                //    }
+                //)
             }
         }
     ) {

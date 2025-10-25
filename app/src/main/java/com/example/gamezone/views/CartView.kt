@@ -83,7 +83,7 @@ fun CartView(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "$${String.format("%.2f", cartItem.price)} c/u",
+                                    "$${String.format("%.0f", cartItem.price)} c/u",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -109,7 +109,7 @@ fun CartView(
                                 }
 
                                 Text(
-                                    "Subtotal: $${String.format("%.2f", cartItem.price * cartItem.quantity)}",
+                                    "Subtotal: $${String.format("%.0f", cartItem.price * cartItem.quantity)}",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -130,7 +130,7 @@ fun CartView(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Total: $${String.format("%.2f", totalAmount)}",
+                "Total: $${String.format("%.0f", totalAmount)}",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
