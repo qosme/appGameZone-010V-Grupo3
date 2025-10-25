@@ -55,7 +55,13 @@ class MainActivity : ComponentActivity() {
 
                     composable(Route.Registro.route) {
                         RegistroView(
-                            onRegistrationSuccess = { navController.navigate(Route.MenuShell.route) }
+                            onRegistrationSuccess = { email ->
+                                loggedInEmail = email
+                                navController.navigate(Route.MenuShell.route) {
+                                    popUpTo(Route.Registro.route) { inclusive = true }
+                                }
+                            }//,
+                            //onNavigateToSignUp = { navController.navigate(Route.Registro.route) }
                         )
                     }
 

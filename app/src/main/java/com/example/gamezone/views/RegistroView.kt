@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RegistroView(
     vm: UsuarioViewModel = hiltViewModel(),
-    onRegistrationSuccess: () -> Unit = {}
+    onRegistrationSuccess: (String) -> Unit = {}
 ) {
     val state = vm.estado.collectAsState().value
     val errors = vm.errores.collectAsState().value
@@ -53,7 +53,7 @@ fun RegistroView(
             scope.launch {
                 snackbarHostState.showSnackbar(result)
                 if (result == "Usuario registrado exitosamente") {
-                    onRegistrationSuccess()
+                    onRegistrationSuccess(state.correo)
                     vm.reset()
                 }
             }
