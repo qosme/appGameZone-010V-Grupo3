@@ -118,7 +118,7 @@ fun MenuShellView(navController: NavController, userEmail: String,
             // --- INTERNAL NAVHOST ---
             NavHost(
                 navController = innerNavController,
-                startDestination = Route.Bienvenida.route,
+                startDestination = Route.Juegos.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Route.Bienvenida.route) { BienvenidaView() }
