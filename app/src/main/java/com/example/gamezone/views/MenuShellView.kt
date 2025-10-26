@@ -118,7 +118,7 @@ fun MenuShellView(navController: NavController, userEmail: String,
             // --- INTERNAL NAVHOST ---
             NavHost(
                 navController = innerNavController,
-                startDestination = Route.Juegos.route,
+                startDestination = Route.Bienvenida.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Route.Bienvenida.route) { BienvenidaView() }
@@ -134,8 +134,7 @@ fun MenuShellView(navController: NavController, userEmail: String,
 
                 // ADDITIONAL SCREENS
                 composable(Route.Option3.route) { RegistroView() }
-                composable(Route.Option4.route) { Option4View() }
-                composable(Route.Option5.route) { Option5CameraView() }
+
 
                 composable(Route.AdminProfile.route) {
                     AdminProfileView(
@@ -159,9 +158,12 @@ fun MenuShellView(navController: NavController, userEmail: String,
                         onNavigateToCheckout = { innerNavController.navigate(Route.Checkout.route) }
                     )
                 }
-                composable(Route.Checkout.route) {
-                    CheckoutView(onOrderComplete = { innerNavController.navigate(Route.Bienvenida.route) })
-                }
+                //composable(Route.Checkout.route) {
+                //    CheckoutView(
+                //        userEmail = userEmail,
+                //        onOrderComplete = { innerNavController.navigate(Route.Cart.route)}
+                //    )
+                //}
 
                 // Game detail with argument
                 composable(Route.JuegosDetalle.route) { backStack ->

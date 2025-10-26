@@ -51,197 +51,56 @@ fun BienvenidaView(
 ) {
     val titulo = vm.texto.collectAsState().value
 
-    // Ejemplo de estado local para el contador de clicks
-    var contador by rememberSaveable { mutableStateOf(0) }
-
+    // Column con solo el título, la descripción y la imagen
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),              // margin interno de la pantalla
-        verticalArrangement = Arrangement.spacedBy(16.dp), // separaciones verticales homogéneas
-        horizontalAlignment = Alignment.CenterHorizontally // centrado horizontal
+            .padding(16.dp), // margin interno de la pantalla
+        verticalArrangement = Arrangement.Center, // Centrado verticalmente
+        horizontalAlignment = Alignment.CenterHorizontally // Centrado horizontalmente
     ) {
-
-        // --- TEXT (título principal) ---
+        // --- TITULO (con un título grande) ---
         Text(
-            text = titulo,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+            text = "¡Bienvenido a GameZone!",
+            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center
         )
 
-        // Subtítulo explicativo
-        Text(
-            text = "Esta pantalla muestra: Text, Column, Row, Image, Button y Card.",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
+        Spacer(modifier = Modifier.height(16.dp)) // Espaciado entre el título y la imagen
 
-        Divider()
-
-        // --- ROW (fila horizontal) ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween, // distribuye a los lados
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Fila con dos extremos",
-                style = MaterialTheme.typography.titleMedium
-            )
-            // Icon como alternativa rápida a Image si no tienes drawables
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = "Ícono informativo"
-            )
-        }
-
-        // --- CARD (contenedor con elevación y estilo) ---
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
+        // --- IMAGEN ---
+        if (imageRes != null) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = "Logo GameZone",
+                contentScale = ContentScale.Crop, // recorta para llenar
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-
-                Text(
-                    text = "Card con Imagen",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                // --- IMAGE ---
-                // Opción 1: cargar desde drawable si imageRes != null
-                // Opción 2: si no tienes recurso aún, mostramos un Icon de placeholder
-                if (imageRes != null) {
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = "Logo Servel",
-                        contentScale = ContentScale.Crop,       // recorta para llenar
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp)
-                            .clip(RoundedCornerShape(12.dp))     // bordes redondos
-                    )
-                } else {
-                    // Placeholder con Icon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(160.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Placeholder",
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text("Agrega una imagen a /res/drawable y pásala por imageRes")
-                    }
-                }
-
-                Text(
-                    text = "La imagen está dentro de una Card. Observa el padding," +
-                            " el clip redondeado y el ContentScale.Crop.",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                // --- BUTTON (interacción y estado) ---
-                Button(
-                    onClick = { contador++ },
-                    modifier = Modifier.align(Alignment.End) // pega el botón a la derecha
-                ) {
-                    Text("Clicks: $contador")
-                }
-            }
-        }
-
-        // Texto final con una Row simple adicional
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Tip: usa Spacer(height/width) para separar elementos.",
-                style = MaterialTheme.typography.bodySmall
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(12.dp)) // bordes redondeados
             )
+        } else {
+            // Placeholder con Icon si no hay imagen
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Placeholder",
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Agrega una imagen a /res/drawable y pásala por imageRes")
         }
+
+        Spacer(modifier = Modifier.height(16.dp)) // Espaciado entre la imagen y la descripción
+
+        // --- DESCRIPCIÓN (breve) ---
+        Text(
+            text = "El lugar donde puedes encontrar los videojuegos que estás buscando.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+        )
+
+
     }
 }
 
-/* ------------------ PREVIEW ------------------ */
-/**
- * Para previsualizar sin ViewModel, usamos una función privada
- * que inyecta un título "fake" y un ícono como placeholder de imagen.
- */
-@Preview(showBackground = true, widthDp = 392)
-@Composable
-private fun BienvenidaViewPreview() {
-    // Simulamos el contenido de Option1 sin acceder a VM,
-    // reusando la misma UI principal con parámetros "falsos".
-    DemoBienvenidaPreview()
-}
 
-@Composable
-private fun DemoBienvenidaPreview() {
-    // Reutilizamos la misma Column para el preview:
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Pantalla Opción 1 (en blanco)",
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "Preview de componentes básicos",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
-        Divider()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Fila con dos extremos", style = MaterialTheme.typography.titleMedium)
-            Icon(Icons.Default.Info, contentDescription = null)
-        }
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                Modifier.fillMaxWidth().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text("Card con Imagen", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(48.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Placeholder de imagen")
-                }
-                var contador by rememberSaveable { mutableStateOf(0) }
-                Button(onClick = { contador++ }, modifier = Modifier.align(Alignment.End)) {
-                    Text("Clicks: $contador")
-                }
-            }
-        }
-        Text("Tip: usa Spacer(height/width) para separar elementos.", style = MaterialTheme.typography.bodySmall)
-    }
-}
