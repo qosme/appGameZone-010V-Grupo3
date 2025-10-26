@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CheckoutView(
     onOrderComplete: () -> Unit = {},
-    userEmail: String,  // User email passed as a parameter
+    userEmail: String,
     vm: CheckoutViewModel = hiltViewModel()
 ) {
     val cartItems = vm.cartItems.collectAsState().value
@@ -28,13 +28,13 @@ fun CheckoutView(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Load cart items on first composition or user email change
+
     LaunchedEffect(userEmail) {
         Log.d("CheckoutView", "Loading cart items for email: $userEmail")
         vm.loadCartItems(userEmail)
     }
 
-    // Handle order result
+
     LaunchedEffect(orderResult) {
         orderResult?.let { result ->
             Log.d("CheckoutView", "Order result: $result")
@@ -47,7 +47,7 @@ fun CheckoutView(
         }
     }
 
-    // State for shipping and payment info
+
     var shippingAddress by remember { mutableStateOf("") }
     var paymentMethod by remember { mutableStateOf("") }
 
@@ -77,7 +77,7 @@ fun CheckoutView(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Debugging: Log cart items to ensure data is being fetched correctly
+
                 if (cartItems.isEmpty()) {
                     Text("No items in the cart.")
                 } else {
@@ -89,7 +89,6 @@ fun CheckoutView(
                     }
                 }
 
-                // Order Summary
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
@@ -98,7 +97,7 @@ fun CheckoutView(
                             fontWeight = FontWeight.Bold
                         )
 
-                        // Display cart items if available
+
                         if (cartItems.isNotEmpty()) {
                             cartItems.forEach { item ->
                                 Row(
@@ -116,7 +115,7 @@ fun CheckoutView(
                                 }
                             }
                         }
-                        // Debugging: Check if totalAmount is correct
+
                         Text("Total Amount: $${totalAmount}")
                         Divider()
 
@@ -139,7 +138,7 @@ fun CheckoutView(
                     }
                 }
 
-                // Shipping Information
+
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -163,7 +162,7 @@ fun CheckoutView(
                     }
                 }
 
-                // Payment Information
+
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -187,11 +186,11 @@ fun CheckoutView(
                     }
                 }
 
-                // Place Order Button
+
                 Button(
                     onClick = {
                         if (shippingAddress.isNotBlank() && paymentMethod.isNotBlank()) {
-                            // Pass userEmail along with the shipping and payment info
+
                             vm.placeOrder(userEmail, shippingAddress, paymentMethod)
                         } else {
                             scope.launch {

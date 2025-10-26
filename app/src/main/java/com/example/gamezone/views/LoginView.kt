@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginView(
     vm: LoginViewModel = hiltViewModel(),
-    onLoginSuccess: (String) -> Unit = {},   // <-- email parameter
+    onLoginSuccess: (String) -> Unit = {},
     onNavigateToSignUp: () -> Unit = {}
 ) {
     val state = vm.estado.collectAsState().value
@@ -43,12 +43,12 @@ fun LoginView(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Handle login result
+
     LaunchedEffect(loginResult) {
         loginResult?.let { result ->
             snackbarHostState.showSnackbar(result)
             if (result == "Login exitoso") {
-                onLoginSuccess(state.correo)  //  pass the logged-in email
+                onLoginSuccess(state.correo)
                 vm.reset()
             }
         }

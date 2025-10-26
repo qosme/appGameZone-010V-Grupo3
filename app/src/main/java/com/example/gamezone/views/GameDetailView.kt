@@ -40,7 +40,7 @@ fun GameDetailView(
 
 
 
-    // Load game details
+
     LaunchedEffect(userEmail) {
         cartVM.setUser(userEmail)
         vm.loadGameDetails(gameId)
@@ -75,7 +75,7 @@ fun GameDetailView(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Game Image
+
                 Image(
                     painter = painterResource(id = game.imageResId),
                     contentDescription = game.name,
@@ -86,7 +86,7 @@ fun GameDetailView(
                     contentScale = ContentScale.Crop
                 )
 
-                // Game Title and Price
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -105,7 +105,7 @@ fun GameDetailView(
                     )
                 }
 
-                // Rating
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -121,7 +121,7 @@ fun GameDetailView(
                     )
                 }
 
-                // Category and Release Date
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -164,7 +164,7 @@ fun GameDetailView(
                     }
                 }
 
-                // Developer and Publisher
+
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -205,7 +205,7 @@ fun GameDetailView(
                     }
                 }
 
-                // Description
+
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -226,7 +226,7 @@ fun GameDetailView(
                     }
                 }
 
-                // Add to Cart Button
+
                 Button(
                     onClick = {
                         game?.let {
@@ -245,7 +245,7 @@ fun GameDetailView(
 
 
 
-                // View Cart Button
+
                 OutlinedButton(
                     onClick = onNavigateToCart,
                     modifier = Modifier.fillMaxWidth()
@@ -265,12 +265,12 @@ fun GameDetailView(
         }
     }
 
-    // Handle add to cart result
+
     LaunchedEffect(addToCartResult) {
         addToCartResult?.let { message ->
             scope.launch {
                 snackbarHostState.showSnackbar(message)
-                cartVM.clearAddToCartResult() // reset after showing
+                cartVM.clearAddToCartResult()
             }
         }
     }

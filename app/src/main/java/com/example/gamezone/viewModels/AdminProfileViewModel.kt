@@ -33,10 +33,10 @@ class AdminProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Initialize data if necessary
+
                 gameDataInitializer.initializeGameData()
 
-                // Fetch the games
+
                 gameRepository.getAllGames()
                     .onEach { fetchedGames ->
                         _games.value = fetchedGames
@@ -54,9 +54,9 @@ class AdminProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 gameRepository.deleteGameById(gameId)
-                loadGames() // Reload the list after deleting
+                loadGames()
             } catch (e: Exception) {
-                // Handle error
+
             }
         }
     }
@@ -68,10 +68,10 @@ class AdminProfileViewModel @Inject constructor(
                 game?.let {
                     val updatedGame = it.copy(isAvailable = isAvailable)
                     gameRepository.updateGame(updatedGame)
-                    loadGames() // Reload the list after updating
+                    loadGames()
                 }
             } catch (e: Exception) {
-                // Handle error
+
             }
         }
     }
@@ -80,9 +80,9 @@ class AdminProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 gameRepository.insertGame(game)
-                loadGames() // Reload the list after adding
+                loadGames()
             } catch (e: Exception) {
-                // Handle error
+
             }
         }
     }

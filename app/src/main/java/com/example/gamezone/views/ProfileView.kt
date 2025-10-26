@@ -52,23 +52,23 @@ fun ProfileView(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Profile editing state
+
     var isEditing by remember { mutableStateOf(false) }
     var editedName by remember { mutableStateOf("") }
     var editedPhone by remember { mutableStateOf("") }
     var editedBio by remember { mutableStateOf("") }
 
-    // Camera state
+    // Camara
     var hasCameraPermission by rememberSaveable { mutableStateOf(false) }
     var pendingImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     var lastPhotoUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
-    // Load user profile on first composition
+
     LaunchedEffect(userEmail) {
         vm.loadUserProfile(userEmail)
     }
 
-    // Update editing state when user loads
+    // Estado de edit actualizado
     LaunchedEffect(currentUser) {
         currentUser?.let { user ->
             editedName = user.name
@@ -78,7 +78,7 @@ fun ProfileView(
         }
     }
 
-    // Handle update results
+    // Resultado de actualizacion
     LaunchedEffect(updateResult) {
         updateResult?.let { result ->
             scope.launch {
@@ -90,20 +90,20 @@ fun ProfileView(
         }
     }
 
-    // Camera launcher
+    // Camara launching
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
             lastPhotoUri = pendingImageUri
-            // Update profile picture in database
+            // Actualiza foto en bd
             currentUser?.let { user ->
                 vm.updateProfilePicture(user.email, lastPhotoUri?.toString())
             }
         }
     }
 
-    // Permission launcher
+    // Permiso launching
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -164,7 +164,7 @@ fun ProfileView(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Picture Section
+                // Foto perfil
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -195,7 +195,7 @@ fun ProfileView(
                                 )
                             }
 
-                            // Camera button
+                            // Boton camara
                             FloatingActionButton(
                                 onClick = {
                                     if (hasCameraPermission) {
@@ -225,7 +225,7 @@ fun ProfileView(
                     }
                 }
 
-                // Profile Information
+                // Info
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -240,7 +240,7 @@ fun ProfileView(
                             fontWeight = FontWeight.Bold
                         )
 
-                        // Name
+                        // NOMBRE
                         OutlinedTextField(
                             value = editedName,
                             onValueChange = { editedName = it },
@@ -249,7 +249,7 @@ fun ProfileView(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Email (read-only)
+                        // EMAIL SIN EDITAR
                         OutlinedTextField(
                             value = currentUser.email,
                             onValueChange = { },
@@ -258,7 +258,7 @@ fun ProfileView(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Phone
+                        // TELEFONO
                         OutlinedTextField(
                             value = editedPhone,
                             onValueChange = { editedPhone = it },
@@ -267,7 +267,7 @@ fun ProfileView(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Bio
+                        // BIOGRAFIA
                         OutlinedTextField(
                             value = editedBio,
                             onValueChange = { editedBio = it },
@@ -277,7 +277,7 @@ fun ProfileView(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        // Admin status
+                        // ESTADO ADMIN
                         if (currentUser.isAdmin) {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -307,7 +307,7 @@ fun ProfileView(
                     }
                 }
 
-                // Account Information
+                // INFO CUENTA
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -338,7 +338,7 @@ fun ProfileView(
     }
 }
 
-// Utility functions for camera
+// FUNCIONES UTILIDAD CAMARA
 private fun createImageUri(context: Context): Uri {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
     val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

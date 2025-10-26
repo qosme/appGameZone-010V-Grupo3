@@ -46,7 +46,7 @@ class GameDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val userId = "current_user@example.com" // Replace with real user ID
+                val userId = "current_user@example.com"
                 val cart = cartRepository.getOrCreateCartForUser(userId)
                 val success = cartRepository.addToCart(cart.id, currentGame.id, currentGame.price)
 

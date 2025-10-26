@@ -26,18 +26,18 @@ fun AdminProfileView(
     onNavigateToAddGame: () -> Unit = {},
     vm: AdminProfileViewModel = hiltViewModel()
 ) {
-    // Collecting game state from ViewModel
+
     val games by vm.games.collectAsState(initial = emptyList()) // Delegate for state
     val isLoading by vm.isLoading.collectAsState(initial = false) // Delegate for loading state
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Log the game list size to see if it updates correctly
+
     LaunchedEffect(games) {
         Log.d("AdminProfileView", "Games list updated: ${games.size} items")
     }
 
-    // Only load games if the list is empty
+
     LaunchedEffect(Unit) {
         if (games.isEmpty()) {
             Log.d("AdminProfileView", "Loading games as the list is empty.")
@@ -65,7 +65,7 @@ fun AdminProfileView(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Admin Info Card
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -86,7 +86,7 @@ fun AdminProfileView(
                 }
             }
 
-            // Games Management Section
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -110,7 +110,7 @@ fun AdminProfileView(
                         }
                     }
 
-                    // Show loading spinner if data is loading
+
                     if (isLoading) {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
@@ -119,7 +119,7 @@ fun AdminProfileView(
                             CircularProgressIndicator()
                         }
                     } else if (games.isEmpty()) {
-                        // Show message if no games available
+
                         Box(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
@@ -130,14 +130,14 @@ fun AdminProfileView(
                             )
                         }
                     } else {
-                        // Show games list
+
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(games, key = { it.id }) { game ->
                                 GameManagementCard(
                                     game = game,
-                                    onEdit = { /* TODO: Navigate to edit game */ },
+                                    onEdit = { /* editar juego */ },
                                     onDelete = { gameId ->
                                         scope.launch {
                                             vm.deleteGame(gameId)
