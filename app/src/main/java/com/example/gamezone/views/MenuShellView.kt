@@ -17,15 +17,17 @@ import com.example.gamezone.viewModels.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuShellView(navController: NavController, userEmail: String,
-                  cartViewModel: CartViewModel = hiltViewModel()
+fun MenuShellView(
+    navController: NavController, // Outer controller (used only for logout)
+    userEmail: String,
+    cartViewModel: CartViewModel = hiltViewModel() // Scoped to MenuShell
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val innerNavController = rememberNavController()
 
     LaunchedEffect(userEmail) {
-        if (userEmail.isNotEmpty()){
+        if (userEmail.isNotEmpty()) {
             cartViewModel.setUser(userEmail)
         }
     }
@@ -34,68 +36,41 @@ fun MenuShellView(navController: NavController, userEmail: String,
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Text(
-                    text = "Menú",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp)
-                )
-                // --- Menu items ---
+                Text("Menú", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp))
+
+                fun navigateInner(route: String) {
+                    innerNavController.navigate(route) {
+                        launchSingleTop = true
+                        popUpTo(innerNavController.graph.startDestinationId) { inclusive = false }
+                    }
+                    scope.launch { drawerState.close() }
+                }
+
                 NavigationDrawerItem(
                     label = { Text("Página Principal") },
                     selected = currentInnerRoute(innerNavController) == Route.Bienvenida.route,
-                    onClick = {
-                        innerNavController.navigate(Route.Bienvenida.route) { launchSingleTop = true }
-                        scope.launch { drawerState.close() }
-                    }
+                    onClick = { navigateInner(Route.Bienvenida.route) }
                 )
-
                 NavigationDrawerItem(
                     label = { Text("Juegos") },
                     selected = currentInnerRoute(innerNavController) == Route.Juegos.route,
-                    onClick = {
-                        innerNavController.navigate(Route.Juegos.route) { launchSingleTop = true }
-                        scope.launch { drawerState.close() }
-                    }
+                    onClick = { navigateInner(Route.Juegos.route) }
                 )
-
                 NavigationDrawerItem(
                     label = { Text("Mi Perfil") },
                     selected = currentInnerRoute(innerNavController) == Route.Profile.route,
-                    onClick = {
-                        innerNavController.navigate(Route.Profile.route) { launchSingleTop = true }
-                        scope.launch { drawerState.close() }
-                    }
+                    onClick = { navigateInner(Route.Profile.route) }
                 )
-
                 NavigationDrawerItem(
-                    label = {Text("Mi Carrito de Compras")},
+                    label = { Text("Mi Carrito de Compras") },
                     selected = currentInnerRoute(innerNavController) == Route.Cart.route,
-                    onClick = {
-                        innerNavController.navigate(Route.Cart.route) {launchSingleTop = true }
-                        scope.launch { drawerState.close() }
-                    }
+                    onClick = { navigateInner(Route.Cart.route) }
                 )
-
                 NavigationDrawerItem(
-                    label = {Text("Administrador")},
+                    label = { Text("Administrador") },
                     selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
-                    onClick = {
-                        innerNavController.navigate(Route.AdminProfile.route) {launchSingleTop = true }
-                        scope.launch { drawerState.close() }
-                    }
+                    onClick = { navigateInner(Route.AdminProfile.route) }
                 )
-
-                //NavigationDrawerItem(
-                //    label = { Text("Login") },
-                //    selected = false,
-                //    onClick = {
-                //        navController.navigate(Route.Login.route) {
-                //            popUpTo(Route.MenuShell.route) { inclusive = true }
-                //            launchSingleTop = true
-                //        }
-                //        scope.launch { drawerState.close() }
-                //    }
-                //)
             }
         }
     ) {
@@ -105,9 +80,7 @@ fun MenuShellView(navController: NavController, userEmail: String,
                     title = { Text("GAMEZONE") },
                     navigationIcon = {
                         IconButton(onClick = {
-                            scope.launch {
-                                if (drawerState.isClosed) drawerState.open() else drawerState.close()
-                            }
+                            scope.launch { if (drawerState.isClosed) drawerState.open() else drawerState.close() }
                         }) {
                             Icon(Icons.Default.Menu, contentDescription = "Menú")
                         }
@@ -115,65 +88,46 @@ fun MenuShellView(navController: NavController, userEmail: String,
                 )
             }
         ) { innerPadding ->
-            // --- INTERNAL NAVHOST ---
             NavHost(
                 navController = innerNavController,
                 startDestination = Route.Bienvenida.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(Route.Bienvenida.route) { BienvenidaView() }
-                composable(Route.Juegos.route) { JuegosView(navController = innerNavController) }
+                composable(Route.Bienvenida.route) {
+                    BienvenidaView() }
 
-                // PROFILE SCREEN
+                composable(Route.Juegos.route) {
+                    JuegosView(innerNavController) }
+
                 composable(Route.Profile.route) {
                     ProfileView(
+                        userEmail,
+                        onBack = { innerNavController.navigateUp() }) }
+
+                composable(Route.Cart.route) { backStackEntry ->
+                    val cartVm: CartViewModel = hiltViewModel(backStackEntry)
+                    CartView(
                         userEmail = userEmail,
-                        onBack = { innerNavController.navigateUp() }
+                        vm = cartVm,
+                        onNavigateToCheckout = { innerNavController.navigate(Route.Checkout.route) }
                     )
                 }
-
-                // ADDITIONAL SCREENS
-                composable(Route.Option3.route) { RegistroView() }
-
-
                 composable(Route.AdminProfile.route) {
                     AdminProfileView(
-                        userEmail = userEmail,
-
-                        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }
-                    )
-                }
+                        userEmail,
+                        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }) }
 
                 composable(Route.AddGame.route) {
                     AddGameView(
                         onBack = { innerNavController.navigateUp() },
-                        onGameAdded = { innerNavController.navigateUp() }
-                    )
-                }
+                        onGameAdded = { innerNavController.navigateUp() }) }
 
-                // CART / CHECKOUT
-                composable(Route.Cart.route) {
-                    CartView(
-                        userEmail = userEmail,
-                        onNavigateToCheckout = { innerNavController.navigate(Route.Checkout.route) }
-                    )
-                }
-                //composable(Route.Checkout.route) {
-                //    CheckoutView(
-                //        userEmail = userEmail,
-                //        onOrderComplete = { innerNavController.navigate(Route.Cart.route)}
-                //    )
-                //}
-
-                // Game detail with argument
                 composable(Route.JuegosDetalle.route) { backStack ->
-                    val id = backStack.arguments?.getString("id") ?: "sin-id"
+                    val id = backStack.arguments?.getString("id") ?: ""
                     GameDetailView(
                         gameId = id,
                         userEmail = userEmail,
-                        onBack = { innerNavController.navigateUp() },
-                        onNavigateToCart = { innerNavController.navigate(Route.Cart.route) }
-                    )
+                        onNavigateToCart = { innerNavController.navigate(Route.Cart.route) })
                 }
             }
         }

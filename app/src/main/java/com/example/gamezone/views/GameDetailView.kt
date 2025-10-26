@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 fun GameDetailView(
     gameId: String,
     userEmail: String,
-    onBack: () -> Unit,
     onNavigateToCart: () -> Unit = {},
     vm: GameDetailViewModel = hiltViewModel(),
     cartVM: CartViewModel = hiltViewModel()
@@ -54,11 +53,7 @@ fun GameDetailView(
         topBar = {
             TopAppBar(
                 title = { Text("Detalle del Juego") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Text("← Volver")
-                    }
-                }
+
             )
         }
     ) { padding ->
