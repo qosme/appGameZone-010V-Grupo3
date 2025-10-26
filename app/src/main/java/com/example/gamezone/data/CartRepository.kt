@@ -28,24 +28,51 @@ class CartRepository @Inject constructor(
         return cart
     }
 
+    //suspend fun addToCart(cartId: String, gameId: String, price: Double): Boolean {
+    //    return try {
+    //        val existingItem = cartDao.getCartItemByGame(cartId, gameId)
+    //        if (existingItem != null) {
+    //            val updatedItem = existingItem.copy(quantity = existingItem.quantity + 1)
+    //            cartDao.updateCartItem(updatedItem)
+    //        } else {
+    //            Log.d("CartRepository", "Adding item: cartId=$cartId, gameId=$gameId, price=$price")
+    //            val cartItem = CartItem(
+    //                id = "item_${cartId}_${gameId}_${System.currentTimeMillis()}",
+    //                cartId = cartId,
+    //                gameId = gameId,
+    //                price = price
+    //            )
+
+    //            cartDao.insertCartItem(cartItem)
+    //            Log.d("CartRepository", "Item inserted: $cartItem")
+
+    //        }
+    //        updateCartTotals(cartId)
+    //         true
+    //    } catch (e: Exception) {
+    //        Log.e("CartRepository", "Error adding item to cart", e)
+    //        false
+    //    }
+    //}
+
     suspend fun addToCart(cartId: String, gameId: String, price: Double): Boolean {
         return try {
-            val existingItem = cartDao.getCartItemByGame(cartId, gameId)
+            val cartItemId = "item_${cartId}_${gameId}"
+            val existingItem = cartDao.getCartItemById(cartItemId)
             if (existingItem != null) {
-                val updatedItem = existingItem.copy(quantity = existingItem.quantity + 1)
-                cartDao.updateCartItem(updatedItem)
+                cartDao.updateCartItem(existingItem.copy(quantity = existingItem.quantity + 1))
             } else {
                 Log.d("CartRepository", "Adding item: cartId=$cartId, gameId=$gameId, price=$price")
                 val cartItem = CartItem(
-                    id = "item_${cartId}_${gameId}_${System.currentTimeMillis()}",
+                    id = cartItemId,
                     cartId = cartId,
                     gameId = gameId,
-                    price = price
+                    price = price,
+                    quantity = 1,
+                    addedAt = System.currentTimeMillis()
                 )
-
                 cartDao.insertCartItem(cartItem)
                 Log.d("CartRepository", "Item inserted: $cartItem")
-
             }
             updateCartTotals(cartId)
             true
@@ -54,6 +81,7 @@ class CartRepository @Inject constructor(
             false
         }
     }
+
 
     suspend fun updateCartItemQuantity(cartItemId: String, quantity: Int): Boolean {
         return try {
@@ -104,19 +132,37 @@ class CartRepository @Inject constructor(
             )
         }
     }
+    //suspend fun getOrCreateCartForUser(userEmail: String): Cart {
+    //    return getCartByUserId(userEmail) ?: run {
+    //        val newCart = Cart(
+    //            id = "cart_$userEmail",
+    //            userId = userEmail,
+    //            totalAmount = 0.0,
+    //            itemCount = 0,
+    //            createdAt = System.currentTimeMillis(),
+    //            updatedAt = System.currentTimeMillis()
+    //        )
+    //        cartDao.insertCart(newCart)
+    //        newCart
+    //    }
+    //}
+
     suspend fun getOrCreateCartForUser(userEmail: String): Cart {
-        return getCartByUserId(userEmail) ?: run {
-            val newCart = Cart(
-                id = "cart_$userEmail", // persistent per-user cart
+        val existing = getCartByUserId(userEmail)
+        return existing ?: run {
+            val cartId = "cart_$userEmail"
+            val cart = Cart(
+                id = cartId,
                 userId = userEmail,
                 totalAmount = 0.0,
                 itemCount = 0,
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis()
             )
-            cartDao.insertCart(newCart)
-            newCart
+            cartDao.insertCart(cart)
+            cart
         }
     }
+
 
 }

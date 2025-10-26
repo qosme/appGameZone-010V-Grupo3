@@ -14,8 +14,15 @@ interface CartDao {
     @Query("SELECT * FROM cart_items WHERE cartId = :cartId")
     fun getCartItems(cartId: String): Flow<List<CartItem>>
 
-    @Query("SELECT ci.*, g.name as gameName, g.imageResId FROM cart_items ci " +
-           "JOIN games g ON ci.gameId = g.id WHERE ci.cartId = :cartId")
+    //@Query("SELECT ci.*, g.name as gameName, g.imageResId FROM cart_items ci " +
+    //       "JOIN games g ON ci.gameId = g.id WHERE ci.cartId = :cartId")
+    //fun getCartItemsWithGameInfo(cartId: String): Flow<List<CartItemWithGame>>
+
+    @Query("SELECT ci.id, ci.cartId, ci.gameId, ci.quantity, ci.price, ci.addedAt,\n" +
+            "       g.name AS gameName, g.imageResId\n" +
+            "FROM cart_items ci\n" +
+            "LEFT JOIN games g ON ci.gameId = g.id\n" +
+            "WHERE ci.cartId = :cartId")
     fun getCartItemsWithGameInfo(cartId: String): Flow<List<CartItemWithGame>>
 
     @Query("SELECT COUNT(*) FROM cart_items WHERE cartId = :cartId")
@@ -65,3 +72,5 @@ data class CartItemWithGame(
     val gameName: String,
     val imageResId: Int
 )
+
+
