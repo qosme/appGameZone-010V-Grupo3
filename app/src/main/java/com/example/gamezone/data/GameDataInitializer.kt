@@ -1,6 +1,7 @@
 package com.example.gamezone.data
 
 import com.example.gamezone.R
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -8,8 +9,16 @@ import javax.inject.Singleton
 class GameDataInitializer @Inject constructor(
     private val gameRepository: GameRepository
 ) {
-    
+    private var initialized = false
     suspend fun initializeGameData() {
+        if (initialized) return
+
+        val existingGames = gameRepository.getAllGames().firstOrNull()
+        if (!existingGames.isNullOrEmpty()) {
+            initialized = true
+            return
+        }
+
         val games = listOf(
             Game(
                 id = "1",
@@ -118,5 +127,6 @@ class GameDataInitializer @Inject constructor(
         )
         
         gameRepository.insertGames(games)
+        initialized = true
     }
 }

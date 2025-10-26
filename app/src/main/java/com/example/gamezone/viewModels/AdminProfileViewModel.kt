@@ -34,7 +34,7 @@ class AdminProfileViewModel @Inject constructor(
             _isLoading.value = true
             try {
 
-                gameDataInitializer.initializeGameData()
+                //gameDataInitializer.initializeGameData()
 
 
                 gameRepository.getAllGames()
