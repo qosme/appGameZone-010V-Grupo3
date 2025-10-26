@@ -30,7 +30,7 @@ class JuegosViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                gameDataInitializer.initializeGameData()
+                //gameDataInitializer.initializeGameData()
             } finally {
                 _isLoading.value = false
             }
