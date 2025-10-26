@@ -104,14 +104,25 @@ fun MenuShellView(
                         userEmail,
                         onBack = { innerNavController.navigateUp() }) }
 
-                composable(Route.Cart.route) { backStackEntry ->
-                    val cartVm: CartViewModel = hiltViewModel(backStackEntry)
+                //doesn't matter which of the two the cart not persistent
+
+                //composable(Route.Cart.route) { backStackEntry ->
+                //    val cartVm: CartViewModel = hiltViewModel(backStackEntry)
+                //    CartView(
+                //        userEmail = userEmail,
+                //        vm = cartVm,
+                //        onNavigateToCheckout = { innerNavController.navigate(Route.Checkout.route) }
+                //    )
+                //}
+
+                composable(Route.Cart.route) {
                     CartView(
                         userEmail = userEmail,
-                        vm = cartVm,
+                        vm = cartViewModel,
                         onNavigateToCheckout = { innerNavController.navigate(Route.Checkout.route) }
                     )
                 }
+
                 composable(Route.AdminProfile.route) {
                     AdminProfileView(
                         userEmail,

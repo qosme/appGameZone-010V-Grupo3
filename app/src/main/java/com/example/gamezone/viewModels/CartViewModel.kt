@@ -1,5 +1,6 @@
 package com.example.gamezone.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamezone.data.CartItemWithGame
@@ -7,6 +8,8 @@ import com.example.gamezone.data.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +37,20 @@ class CartViewModel @Inject constructor(
     private var currentCartId: String? = null
 
 
+    //fun setUser(userEmail: String) {
+    //    currentUserEmail = userEmail
+    //    viewModelScope.launch {
+    //        _isLoading.value = true
+    //        val cart = cartRepository.getOrCreateCartForUser(userEmail)
+    //        currentCartId = cart.id
+    //        loadCartItems(cart.id)
+    //        _isLoading.value = false
+    //    }
+    //}
+
     fun setUser(userEmail: String) {
+        if (currentCartId != null) return
+
         currentUserEmail = userEmail
         viewModelScope.launch {
             _isLoading.value = true
@@ -45,15 +61,49 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun loadCartItems(cartId: String) {
+    //carro suma pero no persiste
+
+    //private fun loadCartItems(cartId: String) {
+    //    viewModelScope.launch {
+    //        cartRepository.getCartItemsWithGameInfo(cartId).collect { items ->
+    //            _cartItems.value = items
+    //            _totalAmount.value = items.sumOf { it.price * it.quantity }
+    //            _itemCount.value = items.sumOf { it.quantity }
+    //        }
+    //    }
+    //}
+
+    //carro persiste pero no suma
+
+    //fun loadCartItems(cartId: String) {
+    //    viewModelScope.launch {
+    //        cartRepository.getCartItemsWithGameInfo(cartId)
+    //            .catch { e -> Log.e("CartViewModel", "Flow error", e) }
+    //            .collect { items ->
+    //                if (items.isNotEmpty()) {
+    //                    _cartItems.value = items
+    //                }
+    //                _totalAmount.value = items.sumOf { it.price * it.quantity }
+    //                _itemCount.value = items.sumOf { it.quantity }
+    //            }
+    //    }
+    //}
+
+    fun loadCartItems(cartId: String) {
         viewModelScope.launch {
-            cartRepository.getCartItemsWithGameInfo(cartId).collect { items ->
-                _cartItems.value = items
-                _totalAmount.value = items.sumOf { it.price * it.quantity }
-                _itemCount.value = items.sumOf { it.quantity }
-            }
+            cartRepository.getCartItemsWithGameInfo(cartId)
+                .catch { e -> Log.e("CartViewModel", "Flow error", e) }
+                .collectLatest { items ->
+                    if (items.isNotEmpty()) {
+                        _cartItems.value = items
+                    }
+                    _totalAmount.value = items.sumOf { it.price * it.quantity }
+                    _itemCount.value = items.sumOf { it.quantity }
+                }
         }
     }
+
+
 
     fun addToCart(gameId: String, price: Double) {
         val userEmail = currentUserEmail ?: return
