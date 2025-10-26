@@ -47,7 +47,7 @@ fun RegistroView(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Handle registration result
+
     LaunchedEffect(registrationResult) {
         registrationResult?.let { result ->
             scope.launch {

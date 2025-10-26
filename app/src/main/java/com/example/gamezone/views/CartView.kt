@@ -32,7 +32,7 @@ fun CartView(
     vm: CartViewModel = hiltViewModel(),
     onNavigateToCheckout: () -> Unit = {}
 ) {
-    // Make sure the cart is loaded
+
     LaunchedEffect(userEmail) {
         vm.setUser(userEmail)
     }
@@ -68,7 +68,7 @@ fun CartView(
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Replace with your image loading method
+
                             Image(
                                 painter = painterResource(id = cartItem.imageResId),
                                 contentDescription = cartItem.gameName,

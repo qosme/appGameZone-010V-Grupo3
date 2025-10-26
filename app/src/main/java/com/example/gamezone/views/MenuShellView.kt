@@ -18,9 +18,9 @@ import com.example.gamezone.viewModels.CartViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuShellView(
-    navController: NavController, // Outer controller (used only for logout)
+    navController: NavController, // Control para logout
     userEmail: String,
-    cartViewModel: CartViewModel = hiltViewModel() // Scoped to MenuShell
+    cartViewModel: CartViewModel = hiltViewModel() //menushell
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()

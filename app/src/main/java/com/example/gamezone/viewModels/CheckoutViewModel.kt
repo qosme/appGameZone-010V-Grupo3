@@ -50,9 +50,9 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    // Place order function
+
     fun placeOrder(userEmail: String, shippingAddress: String, paymentMethod: String) {
-        _isLoading.value = true  // Set loading state to true while placing order
+        _isLoading.value = true
         _orderResult.value = null
         Log.d("CheckoutViewModel", "Placing order, loading state: ${_isLoading.value}")
         viewModelScope.launch {
@@ -63,11 +63,11 @@ class CheckoutViewModel @Inject constructor(
 
                 if (cartItems.isEmpty()) {
                     _orderResult.value = "El carrito está vacío"
-                    _isLoading.value = false  // Stop loading if cart is empty
+                    _isLoading.value = false
                     return@launch
                 }
 
-                // Create order
+
                 val orderId = orderRepository.createOrder(
                     userId = userEmail,
                     totalAmount = totalAmount,
@@ -77,7 +77,7 @@ class CheckoutViewModel @Inject constructor(
                 )
 
                 if (orderId != null) {
-                    // Clear cart after successful order
+
                     cart?.let {
                         cartRepository.clearCart(it.id)
                     }
@@ -89,7 +89,7 @@ class CheckoutViewModel @Inject constructor(
             } catch (e: Exception) {
                 _orderResult.value = "Error al procesar el pedido: ${e.message}"
             } finally {
-                _isLoading.value = false  // Set loading state to false after order is placed
+                _isLoading.value = false
             }
         }
     }

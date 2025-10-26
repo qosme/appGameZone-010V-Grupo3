@@ -5,7 +5,7 @@ sealed class Route(val route: String) {
     // Outer NavHost
     object Login : Route("login")
     object Registro : Route("registro")
-    object MenuShell : Route("menu_shell") // container with drawer
+    object MenuShell : Route("menu_shell")
 
     // Inner NavHost (namespaced with "menu/")
     object Bienvenida : Route("menu/bienvenida")

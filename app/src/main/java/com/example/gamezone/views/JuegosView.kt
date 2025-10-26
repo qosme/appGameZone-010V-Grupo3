@@ -69,7 +69,7 @@ fun JuegosView(
                                     }
                                     navController.navigate(Route.JuegosDetalle.build(id = item.id)) {
                                         launchSingleTop = true
-                                        // Ejemplo de control de back stack:
+
                                         popUpTo(Route.Juegos.route) { inclusive = false }
                                     }
                                 }
@@ -85,7 +85,7 @@ fun JuegosView(
                                     painter = painterResource(id = item.imageResId),
                                     contentDescription = item.name,
                                     modifier = Modifier
-                                        .size(64.dp) // Adjust as needed
+                                        .size(64.dp)
                                         .padding(end = 8.dp)
                                 )
 
@@ -103,7 +103,7 @@ fun JuegosView(
                                     )
                                 }
 
-                                // "Ver detalle" label
+
                                 Text("Ver detalle", style = MaterialTheme.typography.labelLarge)
                             }
                         }
@@ -121,7 +121,7 @@ fun JuegosDetalleView(
     onBack: () -> Unit,
     onNavigateToCart: () -> Unit = {}
 ) {
-    // This will be replaced with the enhanced version
+
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

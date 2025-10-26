@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 data class Order(
     @PrimaryKey
     val id: String,
-    val userId: String, // Email of the user
+    val userId: String,
     val totalAmount: Double,
-    val status: String = "pending", // pending, confirmed, shipped, delivered, cancelled
+    val status: String = "pending",
     val shippingAddress: String,
     val paymentMethod: String,
     val createdAt: Long = System.currentTimeMillis()

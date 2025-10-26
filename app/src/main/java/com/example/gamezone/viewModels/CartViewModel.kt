@@ -33,7 +33,7 @@ class CartViewModel @Inject constructor(
     private var currentUserEmail: String? = null
     private var currentCartId: String? = null
 
-    // Set the currently logged-in user
+
     fun setUser(userEmail: String) {
         currentUserEmail = userEmail
         viewModelScope.launch {
@@ -75,7 +75,7 @@ class CartViewModel @Inject constructor(
     private suspend fun performAddToCart(cartId: String, gameId: String, price: Double) {
         val success = cartRepository.addToCart(cartId, gameId, price)
         _addToCartResult.value = if (success) "Juego agregado al carrito" else "Error al agregar al carrito"
-        loadCartItems(cartId) // refresh cart after adding
+        loadCartItems(cartId)
     }
 
     fun clearAddToCartResult() {
@@ -86,7 +86,7 @@ class CartViewModel @Inject constructor(
         if (quantity <= 0) return
         viewModelScope.launch {
             cartRepository.updateCartItemQuantity(cartItemId, quantity)
-            // refresh the cart after updating
+
             currentCartId?.let { loadCartItems(it) }
         }
     }
@@ -94,7 +94,7 @@ class CartViewModel @Inject constructor(
     fun removeFromCart(cartItemId: String) {
         viewModelScope.launch {
             cartRepository.removeFromCart(cartItemId)
-            // refresh the cart after removing
+
             currentCartId?.let { loadCartItems(it) }
         }
     }

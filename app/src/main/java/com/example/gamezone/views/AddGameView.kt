@@ -74,7 +74,7 @@ fun AddGameView(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Game Name
+
                     OutlinedTextField(
                         value = gameName,
                         onValueChange = { gameName = it },
@@ -82,7 +82,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Description
+
                     OutlinedTextField(
                         value = gameDescription,
                         onValueChange = { gameDescription = it },
@@ -90,7 +90,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Long Description
+
                     OutlinedTextField(
                         value = longDescription,
                         onValueChange = { longDescription = it },
@@ -99,7 +99,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Price
+
                     OutlinedTextField(
                         value = price,
                         onValueChange = { price = it },
@@ -108,7 +108,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Category
+
                     OutlinedTextField(
                         value = category,
                         onValueChange = { category = it },
@@ -116,7 +116,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Rating
+
                     OutlinedTextField(
                         value = rating,
                         onValueChange = { rating = it },
@@ -125,7 +125,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Release Date
+
                     OutlinedTextField(
                         value = releaseDate,
                         onValueChange = { releaseDate = it },
@@ -133,7 +133,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Developer
+
                     OutlinedTextField(
                         value = developer,
                         onValueChange = { developer = it },
@@ -141,7 +141,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Publisher
+
                     OutlinedTextField(
                         value = publisher,
                         onValueChange = { publisher = it },
@@ -149,7 +149,7 @@ fun AddGameView(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Availability
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -164,7 +164,7 @@ fun AddGameView(
                 }
             }
 
-            // Add Game Button
+
             Button(
                 onClick = {
                     if (validateGameData(gameName, gameDescription, longDescription, price, category, rating, releaseDate, developer, publisher)) {

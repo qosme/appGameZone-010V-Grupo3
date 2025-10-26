@@ -55,7 +55,7 @@ class ProfileViewModel @Inject constructor(
                 val success = userRepository.updateUserProfile(email, name, phone, bio)
                 if (success) {
                     _updateResult.value = "Perfil actualizado exitosamente"
-                    loadUserProfile(email) // Reload the profile
+                    loadUserProfile(email)
                 } else {
                     _updateResult.value = "Error al actualizar perfil"
                 }
@@ -76,7 +76,7 @@ class ProfileViewModel @Inject constructor(
                 val success = userRepository.updateUserProfilePicture(email, profilePictureUri)
                 if (success) {
                     _updateResult.value = "Foto de perfil actualizada"
-                    loadUserProfile(email) // Reload the profile
+                    loadUserProfile(email)
                 } else {
                     _updateResult.value = "Error al actualizar foto de perfil"
                 }

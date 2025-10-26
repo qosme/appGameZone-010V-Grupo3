@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Cart(
     @PrimaryKey
     val id: String,
-    val userId: String, // Email of the user
+    val userId: String,
     val totalAmount: Double = 0.0,
     val itemCount: Int = 0,
     val createdAt: Long = System.currentTimeMillis(),

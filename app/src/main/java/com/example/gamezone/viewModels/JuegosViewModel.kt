@@ -36,7 +36,6 @@ class JuegosViewModel @Inject constructor(
             }
         }
 
-        // Observe games reactively
         gameRepository.getAllGames()
             .onEach { games -> _items.value = games }
             .launchIn(viewModelScope)
