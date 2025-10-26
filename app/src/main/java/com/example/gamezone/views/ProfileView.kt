@@ -121,11 +121,7 @@ fun ProfileView(
         topBar = {
             TopAppBar(
                 title = { Text("Mi Perfil") },
-                navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("← Volver")
-                    }
-                },
+
                 actions = {
                     if (isEditing) {
                         TextButton(

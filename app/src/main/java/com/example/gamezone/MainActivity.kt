@@ -19,7 +19,7 @@ import com.example.gamezone.views.LoginView
 import com.example.gamezone.views.MenuShellView
 import com.example.gamezone.views.ProfileView
 import com.example.gamezone.views.RegistroView
-import com.example.gamezone.views.WelcomeView
+
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.gamezone.views.AdminProfileView
 import com.example.gamezone.views.CartView
+import com.example.gamezone.views.CheckoutView
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -43,6 +44,10 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = Route.Login.route
                 ) {
+                    composable(Route.Bienvenida.route) {
+                        BienvenidaView()
+                    }
+
                     composable(Route.Login.route) {
                         LoginView(
                             onLoginSuccess = { email ->
@@ -89,6 +94,24 @@ class MainActivity : ComponentActivity() {
                             onNavigateToAddGame = { navController.navigate(Route.AddGame.route) }
                         )
                     }
+
+                    //composable(Route.Checkout.route) {
+                    //    CheckoutView(
+                    //        userEmail =  loggedInEmail ?: "sin-email@example.com",
+                    //        onOrderComplete = { navController.}
+                    //    )
+                    //}
+
+                    //composable(Route.Cart.route) {
+                    //    CartView(
+                    //        userEmail = loggedInEmail ?: "sin-email@example.com",
+                    //        onNavigateToCheckout = {
+                    //            navController.navigate(Route.Checkout.route + "/${loggedInEmail}")
+                    //        }
+                    //    )
+                    //}
+
+
                 }
             }
         }

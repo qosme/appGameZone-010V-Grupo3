@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamezone.data.CartItemWithGame
 import com.example.gamezone.viewModels.CartViewModel
@@ -45,7 +46,13 @@ fun CartView(
         if (isLoading) {
             CircularProgressIndicator()
         } else if (cartItems.isEmpty()) {
-            Text("El carrito está vacío")
+            Text(
+                "El carrito está vacío",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center),
+                fontSize = 24.sp
+            )
         } else {
             LazyColumn {
                 items(cartItems) { cartItem ->
