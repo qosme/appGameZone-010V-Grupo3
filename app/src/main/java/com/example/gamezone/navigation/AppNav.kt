@@ -2,24 +2,22 @@ package com.example.gamezone.navigation
 
 sealed class Route(val route: String) {
 
-    data object MenuShell : Route("menu_shell") // contenedor con drawer
-    data object Bienvenida : Route("bienvenida")
-    data object Juegos : Route("juegos")
-    data object Option3 : Route("option3")
+    // Outer NavHost
+    object Login : Route("login")
+    object Registro : Route("registro")
+    object MenuShell : Route("menu_shell") // container with drawer
 
-    //detalle con argumento
-    data object JuegosDetalle : Route("juegos/detalle/{id}") {
-        fun build(id: String) = "juegos/detalle/$id"
+    // Inner NavHost (namespaced with "menu/")
+    object Bienvenida : Route("menu/bienvenida")
+    object Juegos : Route("menu/juegos")
+    object Cart : Route("menu/cart")
+    object Checkout : Route("menu/checkout")
+    object Profile : Route("menu/profile")
+    object AdminProfile : Route("menu/adminprofile")
+    object AddGame : Route("menu/addgame")
+
+    // Game detail with argument
+    object JuegosDetalle : Route("menu/juegos/detalle/{id}") {
+        fun build(id: String) = "menu/juegos/detalle/$id"
     }
-
-
-    data object Login : Route("Login")
-    data object Registro : Route("Registro")
-    data object Cart : Route("Cart")
-    data object Checkout : Route("Checkout")
-    data object Profile : Route("profile") {
-        fun build(email: String) = "profile/$email"
-    }
-    data object AdminProfile : Route("AdminProfile")
-    data object AddGame : Route("AddGame")
 }

@@ -36,18 +36,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             Surface(color = MaterialTheme.colorScheme.background) {
                 val navController = rememberNavController()
-
-                //  Remember must be inside a composable lambda
                 var loggedInEmail by remember { mutableStateOf<String?>(null) }
 
                 NavHost(
                     navController = navController,
                     startDestination = Route.Login.route
                 ) {
-                    composable(Route.Bienvenida.route) {
-                        BienvenidaView()
-                    }
-
                     composable(Route.Login.route) {
                         LoginView(
                             onLoginSuccess = { email ->
@@ -67,8 +61,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(Route.MenuShell.route) {
                                     popUpTo(Route.Registro.route) { inclusive = true }
                                 }
-                            }//,
-                            //onNavigateToSignUp = { navController.navigate(Route.Registro.route) }
+                            }
                         )
                     }
 
@@ -78,43 +71,8 @@ class MainActivity : ComponentActivity() {
                             userEmail = loggedInEmail ?: "sin-email@example.com"
                         )
                     }
-
-                    composable(Route.Cart.route) {
-                        // Pass the cart data to the CartView
-                        CartView(
-                            userEmail = loggedInEmail ?: "sin-email@example.com",
-                            //vm = cartViewModel,
-                            onNavigateToCheckout = { navController.navigate(Route.Checkout.route) } // Navigate to checkout
-                        )
-                    }
-
-                    composable(Route.AdminProfile.route) {
-                        AdminProfileView(
-                            userEmail = loggedInEmail ?: "sin-email@example.com",
-                            onNavigateToAddGame = { navController.navigate(Route.AddGame.route) }
-                        )
-                    }
-
-                    //composable(Route.Checkout.route) {
-                    //    CheckoutView(
-                    //        userEmail =  loggedInEmail ?: "sin-email@example.com",
-                    //        onOrderComplete = { navController.}
-                    //    )
-                    //}
-
-                    //composable(Route.Cart.route) {
-                    //    CartView(
-                    //        userEmail = loggedInEmail ?: "sin-email@example.com",
-                    //        onNavigateToCheckout = {
-                    //            navController.navigate(Route.Checkout.route + "/${loggedInEmail}")
-                    //        }
-                    //    )
-                    //}
-
-
                 }
             }
         }
     }
 }
-
