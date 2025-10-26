@@ -19,12 +19,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 
 
-/**
- * CLASE 2: Flujo y Navegación
- * - Lista con navegación a Detalle con argumento (id).
- * - Uso de NavController.navigate con launchSingleTop y popUpTo.
- * - Snackbar para feedback al tocar un ítem.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JuegosView(
@@ -120,9 +114,7 @@ fun JuegosView(
     }
 }
 
-/**
- * Pantalla de Detalle para la navegación con argumento
- */
+
 @Composable
 fun JuegosDetalleView(
     id: String,
