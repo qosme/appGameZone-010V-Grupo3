@@ -1,6 +1,7 @@
 package com.example.gamezone.data
 
 import kotlinx.coroutines.flow.Flow
+import org.mindrot.jbcrypt.BCrypt
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,18 +39,28 @@ class UserRepository @Inject constructor(
         userDao.deleteUserByEmail(email)
     }
 
+    //suspend fun validateLogin(email: String, password: String): Boolean {
+    //    val user = getUserByCredentials(email, password)
+    //    return user != null
+    //}
+
     suspend fun validateLogin(email: String, password: String): Boolean {
-        val user = getUserByCredentials(email, password)
-        return user != null
+        // Encontrar usuario por email
+        val user = getUserByEmail(email) ?: return false
+
+        // Verificar que la clave hasheada sea igual
+        return BCrypt.checkpw(password, user.password)
     }
 
     suspend fun registerUser(email: String, password: String, name: String, phone: String = ""): Boolean {
         val normalizedEmail = email.trim().lowercase(Locale.getDefault())
         val existingUser = getUserByEmail(normalizedEmail)
         if (existingUser != null) return false
+        //hashear clave antes de guardarla
+        val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
         val newUser = User(
             email = normalizedEmail,
-            password = password,
+            password = hashedPassword,
             name = name,
             phone = phone
         )

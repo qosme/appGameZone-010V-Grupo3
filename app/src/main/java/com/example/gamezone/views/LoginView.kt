@@ -71,7 +71,7 @@ fun LoginView(
             OutlinedTextField(
                 value = state.correo,
                 onValueChange = vm::onCorreoChange,
-                label = { Text("Correo *") },
+                label = { Text("Correo") },
                 isError = errors.correo != null,
                 supportingText = { if (errors.correo != null) Text(errors.correo!!) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -82,7 +82,7 @@ fun LoginView(
             OutlinedTextField(
                 value = state.clave,
                 onValueChange = vm::onClaveChange,
-                label = { Text(text = "Contraseña *") },
+                label = { Text(text = "Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 isError = errors.clave != null,
                 supportingText = {
@@ -98,20 +98,42 @@ fun LoginView(
             Spacer(Modifier.height(8.dp))
 
             // BOTONES
+            //Row(
+            //    horizontalArrangement = Arrangement.spacedBy(12.dp)
+            //) {
+            //    Button(
+            //        onClick = { vm.login() },
+            //        enabled = !isLoading
+            //    ) {
+            //        Text(if (isLoading) "Iniciando sesión..." else "Iniciar Sesión")
+            //    }
+            //    OutlinedButton(onClick = { vm.reset() }) {
+            //        Text("Limpiar")
+            //    }
+            //}
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween // Push buttons to left and right
             ) {
+                // Left-aligned button
                 Button(
                     onClick = { vm.login() },
                     enabled = !isLoading
                 ) {
                     Text(if (isLoading) "Iniciando sesión..." else "Iniciar Sesión")
                 }
-                OutlinedButton(onClick = { vm.reset() }) {
+
+                // Right-aligned button
+                OutlinedButton(
+                    onClick = { vm.reset() }
+                ) {
                     Text("Limpiar")
                 }
             }
-            
+
+
+
             // Botón de registro
             OutlinedButton(
                 onClick = { onNavigateToSignUp() },

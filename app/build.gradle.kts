@@ -94,4 +94,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
+    //Hashing
+    implementation("org.mindrot:jbcrypt:0.4")
 }
