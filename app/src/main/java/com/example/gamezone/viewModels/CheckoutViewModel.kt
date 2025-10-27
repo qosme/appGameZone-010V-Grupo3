@@ -9,6 +9,8 @@ import com.example.gamezone.data.OrderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,25 +32,102 @@ class CheckoutViewModel @Inject constructor(
     private val _orderResult = MutableStateFlow<String?>(null)
     val orderResult: StateFlow<String?> = _orderResult
 
+    //fun loadCartItems(userEmail: String) {
+    //    _isLoading.value = true
+    //    viewModelScope.launch {
+    //        try {
+    //            val cart = cartRepository.getCartByUserId(userEmail)
+    //            if (cart != null) {
+    //                cartRepository.getCartItemsWithGameInfo(cart.id).collect { items ->
+    //                    _cartItems.value = items
+    //                    _totalAmount.value = items.sumOf { it.price * it.quantity }
+    //                    Log.d("CheckoutViewModel", "Loaded cart items: $items")
+    //                }
+    //            }
+    //        } catch (e: Exception) {
+    //            _orderResult.value = "Error al cargar el carrito: ${e.message}"
+    //        } finally {
+    //            _isLoading.value = false
+    //        }
+    //    }
+    //}
+
     fun loadCartItems(userEmail: String) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
+                Log.d("CheckoutViewModel", "Fetching cart for user: $userEmail")
+
+                // Fetch the cart for the user
                 val cart = cartRepository.getCartByUserId(userEmail)
                 if (cart != null) {
-                    cartRepository.getCartItemsWithGameInfo(cart.id).collect { items ->
-                        _cartItems.value = items
-                        _totalAmount.value = items.sumOf { it.price * it.quantity }
-                        Log.d("CheckoutViewModel", "Loaded cart items: $items")
-                    }
+                    // Fetch cart items for the retrieved cart
+                    cartRepository.getCartItemsWithGameInfo(cart.id)
+                        .catch { e ->
+                            Log.e("CheckoutViewModel", "Flow error: ${e.message}", e)
+                            _orderResult.value = "Error al cargar los productos del carrito"
+                        }
+                        .collectLatest { items ->
+                            if (items.isNotEmpty()) {
+                                _cartItems.value = items
+                                _totalAmount.value = items.sumOf { it.price * it.quantity }
+                                Log.d("CheckoutViewModel", "Loaded cart items: $items")
+                            } else {
+                                _orderResult.value = "Carrito vacío"
+                            }
+                        }
+                } else {
+                    _orderResult.value = "No se encontró el carrito para el usuario."
                 }
             } catch (e: Exception) {
+                // Catch any other exceptions (e.g., network or repository errors)
+                Log.e("CheckoutViewModel", "Error al cargar el carrito: ${e.message}", e)
                 _orderResult.value = "Error al cargar el carrito: ${e.message}"
             } finally {
+                // Ensure the loading state is always reset
+                Log.d("CheckoutViewModel", "Setting isLoading to false")
                 _isLoading.value = false
             }
         }
     }
+
+
+
+    //fun loadCartItems(userEmail: String) {
+    //    _isLoading.value = true
+    //    viewModelScope.launch {
+    //        try {
+    //            // Fetch the cart for the user
+    //            val cart = cartRepository.getCartByUserId(userEmail)
+    //            if (cart != null) {
+    //                // Fetch cart items for the retrieved cart
+    //                cartRepository.getCartItemsWithGameInfo(cart.id)
+    //                    .catch { e ->
+    //                        Log.e("CheckoutViewModel", "Flow error: ${e.message}", e)
+    //                        _orderResult.value = "Error al cargar los productos del carrito"
+    //                    }
+    //                    .collectLatest { items ->
+    //                        if (items.isNotEmpty()) {
+    //                            _cartItems.value = items
+    //                            _totalAmount.value = items.sumOf { it.price * it.quantity }
+    //                            Log.d("CheckoutViewModel", "Loaded cart items: $items")
+    //                        } else {
+    //                            _orderResult.value = "Carrito vacío"
+    //                        }
+    //                    }
+    //            } else {
+    //                _orderResult.value = "No se encontró el carrito para el usuario."
+    //            }
+    //        } catch (e: Exception) {
+    //            // Catch any other exceptions (e.g., network or repository errors)
+    //            Log.e("CheckoutViewModel", "Error al cargar el carrito: ${e.message}", e)
+    //            _orderResult.value = "Error al cargar el carrito: ${e.message}"
+    //        } finally {
+    //            // Ensure the loading state is always reset
+    //            _isLoading.value = false
+    //        }
+    //    }
+    //}
 
 
     fun placeOrder(userEmail: String, shippingAddress: String, paymentMethod: String) {

@@ -140,6 +140,13 @@ fun MenuShellView(
                         userEmail = userEmail,
                         onNavigateToCart = { innerNavController.navigate(Route.Cart.route) })
                 }
+
+                composable(Route.Checkout.route) {
+                    CheckoutView(
+                        //BienvenidaView(),
+                        userEmail = userEmail
+                    )
+                }
             }
         }
     }
