@@ -43,12 +43,13 @@ fun AddGameView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Agregar Juego") },
-                navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("← Volver")
-                    }
-                }
+                title = { Text("Agregar Juego",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
+                //navigationIcon = {
+                //    TextButton(onClick = onBack) {
+                //        Text("← Volver")
+                //    }
+                //}
             )
         }
     ) { padding ->
@@ -60,11 +61,11 @@ fun AddGameView(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = "Agregar Nuevo Juego",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            //Text(
+            //    text = "Agregar Nuevo Juego",
+            //    style = MaterialTheme.typography.titleLarge,
+            //    fontWeight = FontWeight.Bold
+            //)
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -179,7 +180,7 @@ fun AddGameView(
                             releaseDate = releaseDate,
                             developer = developer,
                             publisher = publisher,
-                            imageResId = R.drawable.gamezonelogo, // Default image
+                            imageResId = R.drawable.gamezonelogo, // imagen por default
                             isAvailable = isAvailable
                         )
                         

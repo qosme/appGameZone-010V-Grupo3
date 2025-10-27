@@ -76,7 +76,7 @@ fun RegistroView(
             OutlinedTextField(
                 value = state.nombre,
                 onValueChange = vm::onNombreChange,
-                label = { Text("Nombre completo") },
+                label = { Text("Nombre completo *") },
                 isError = errors.nombre != null,
                 supportingText = { if (errors.nombre != null) Text(errors.nombre!!) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -87,7 +87,7 @@ fun RegistroView(
             OutlinedTextField(
                 value = state.correo,
                 onValueChange = vm::onCorreoChange,
-                label = { Text("Correo electrónico") },
+                label = { Text("Correo electrónico *") },
                 isError = errors.correo != null,
                 supportingText = { if (errors.correo != null) Text(errors.correo!!) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -98,7 +98,7 @@ fun RegistroView(
             OutlinedTextField(
                 value = state.telefono,
                 onValueChange = vm::onTelefonoChange,
-                label = { Text("Teléfono") },
+                label = { Text("Teléfono *") },
                 isError = errors.telefono != null,
                 supportingText = { if (errors.telefono != null) Text(errors.telefono!!) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -109,7 +109,7 @@ fun RegistroView(
             OutlinedTextField(
                 value = state.clave,
                 onValueChange = vm::onClaveChange,
-                label = { Text("Contraseña") },
+                label = { Text("Contraseña *") },
                 isError = errors.clave != null,
                 supportingText = { if (errors.clave != null) Text(errors.clave!!) },
                 visualTransformation = PasswordVisualTransformation(),
@@ -127,7 +127,7 @@ fun RegistroView(
                     onCheckedChange = vm::onAceptarTerminosChange
                 )
                 Text(
-                    text = "Acepto los términos y condiciones",
+                    text = "Acepto los términos y condiciones *",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 8.dp)
                 )
