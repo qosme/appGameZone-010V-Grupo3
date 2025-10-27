@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -31,10 +32,10 @@ import com.example.gamezone.R
 @Composable
 fun BienvenidaView(
     vm: BienvenidaViewModel = viewModel(),
-
-    @DrawableRes imageRes: Int? = R.drawable.gamezonelogo
+    @DrawableRes imageRes: Int? = R.drawable.gamezonelogo,
+    onLogout: () -> Unit
 ) {
-    val titulo = vm.texto.collectAsState().value
+    //val titulo = vm.texto.collectAsState().value
 
 
     Column(
@@ -64,16 +65,16 @@ fun BienvenidaView(
                     .height(250.dp)
                     .clip(RoundedCornerShape(12.dp))
             )
-        } else {
+        } //else {
 
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = "Placeholder",
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("Agrega una imagen a /res/drawable y pásala por imageRes")
-        }
+            //Icon(
+            //    imageVector = Icons.Default.Info,
+            //    contentDescription = "Placeholder",
+            //    modifier = Modifier.size(48.dp)
+            //)
+            //Spacer(Modifier.width(8.dp))
+            //Text("Agrega una imagen a /res/drawable y pásala por imageRes")
+        //}
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -84,8 +85,18 @@ fun BienvenidaView(
             textAlign = TextAlign.Center
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onLogout,
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+        ) {
+            Text("Cerrar sesión")
+        }
 
     }
+
+
 }
 
 

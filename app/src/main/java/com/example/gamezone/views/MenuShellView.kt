@@ -93,8 +93,18 @@ fun MenuShellView(
                 startDestination = Route.Bienvenida.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
+                //composable(Route.Bienvenida.route) {
+                //    BienvenidaView() }
+
                 composable(Route.Bienvenida.route) {
-                    BienvenidaView() }
+                    BienvenidaView(
+                        onLogout = { navController.navigate(Route.Login.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
 
                 composable(Route.Juegos.route) {
                     JuegosView(innerNavController) }
