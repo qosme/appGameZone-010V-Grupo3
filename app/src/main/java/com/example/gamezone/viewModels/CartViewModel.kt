@@ -61,17 +61,17 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    //carro suma pero no persiste
 
-    //private fun loadCartItems(cartId: String) {
-    //    viewModelScope.launch {
-    //        cartRepository.getCartItemsWithGameInfo(cartId).collect { items ->
-    //            _cartItems.value = items
-    //            _totalAmount.value = items.sumOf { it.price * it.quantity }
-    //            _itemCount.value = items.sumOf { it.quantity }
-    //        }
-    //    }
-    //}
+
+    private fun loadCartItems(cartId: String) {
+        viewModelScope.launch {
+            cartRepository.getCartItemsWithGameInfo(cartId).collect { items ->
+                _cartItems.value = items
+                _totalAmount.value = items.sumOf { it.price * it.quantity }
+                _itemCount.value = items.sumOf { it.quantity }
+            }
+        }
+    }
 
     //carro persiste pero no suma
 
@@ -89,19 +89,21 @@ class CartViewModel @Inject constructor(
     //    }
     //}
 
-    fun loadCartItems(cartId: String) {
-        viewModelScope.launch {
-            cartRepository.getCartItemsWithGameInfo(cartId)
-                .catch { e -> Log.e("CartViewModel", "Flow error", e) }
-                .collectLatest { items ->
-                    if (items.isNotEmpty()) {
-                        _cartItems.value = items
-                    }
-                    _totalAmount.value = items.sumOf { it.price * it.quantity }
-                    _itemCount.value = items.sumOf { it.quantity }
-                }
-        }
-    }
+    //se queda con la imagen del ultimo juego al borrarlo
+
+    //fun loadCartItems(cartId: String) {
+    //    viewModelScope.launch {
+    //        cartRepository.getCartItemsWithGameInfo(cartId)
+    //            .catch { e -> Log.e("CartViewModel", "Flow error", e) }
+    //            .collectLatest { items ->
+    //                if (items.isNotEmpty()) {
+    //                    _cartItems.value = items
+    //                }
+    //                _totalAmount.value = items.sumOf { it.price * it.quantity }
+    //                _itemCount.value = items.sumOf { it.quantity }
+    //            }
+    //    }
+    //}
 
 
 
