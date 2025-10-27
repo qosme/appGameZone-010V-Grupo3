@@ -26,6 +26,9 @@ class AdminProfileViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
+    private val _updateResult = MutableStateFlow<String?>(null)
+    val updateResult: StateFlow<String?> = _updateResult
+
     init {
         loadGames()
     }
@@ -83,6 +86,18 @@ class AdminProfileViewModel @Inject constructor(
                 loadGames()
             } catch (e: Exception) {
 
+            }
+        }
+    }
+
+    fun updateGame(game: Game) {
+        viewModelScope.launch {
+            try {
+                gameRepository.updateGame(game)
+                loadGames() // recargar los juegos despues de actualizar
+                _updateResult.value = "Juego actualizado exitosamente"
+            } catch (e: Exception) {
+                _updateResult.value = "Error al actualizar juego: ${e.message}"
             }
         }
     }

@@ -15,6 +15,11 @@ sealed class Route(val route: String) {
     object Profile : Route("menu/profile")
     object AdminProfile : Route("menu/adminprofile")
     object AddGame : Route("menu/addgame")
+    object EditGame : Route("menu/editgame/{gameId}") {
+        fun createRoute(gameId: String): String {
+            return "menu/editgame/$gameId"
+        }
+    }
 
     // Game detail with argument
     object JuegosDetalle : Route("menu/juegos/detalle/{id}") {

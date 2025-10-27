@@ -52,7 +52,8 @@ fun GameDetailView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Detalle del Juego") },
+                title = { Text("Detalle del Juego",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
 
             )
         }

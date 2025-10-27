@@ -43,6 +43,14 @@ fun CartView(
     val isLoading by vm.isLoading.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+
+        Text(
+            text = "Carro de Compras",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp) // espacio bajo el titulo
+        )
+
         if (isLoading) {
             CircularProgressIndicator()
         } else if (cartItems.isEmpty()) {

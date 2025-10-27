@@ -123,10 +123,20 @@ fun MenuShellView(
                     )
                 }
 
+                //composable(Route.AdminProfile.route) {
+                //    AdminProfileView(
+                //        userEmail,
+                //        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }) }
+
                 composable(Route.AdminProfile.route) {
                     AdminProfileView(
                         userEmail,
-                        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }) }
+                        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) },
+                        onEditGame = { gameId ->
+                            innerNavController.navigate(Route.EditGame.createRoute(gameId))  // navegacion a editar juego con el id - segun appnav
+                        }
+                    )
+                }
 
                 composable(Route.AddGame.route) {
                     AddGameView(
@@ -147,6 +157,17 @@ fun MenuShellView(
                         userEmail = userEmail
                     )
                 }
+
+                composable(Route.EditGame.route) { backStackEntry ->
+                    val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+                    EditGameView(
+                        gameId = gameId,
+                        onSave = { innerNavController.navigateUp() }, // volver al guardar
+                        onCancel = { innerNavController.navigateUp() } // volver al cancelar
+                    )
+                }
+
+
             }
         }
     }

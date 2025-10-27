@@ -55,7 +55,8 @@ fun CheckoutView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Finalizar Compra") }
+                title = { Text("Finalizar Compra",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) }
             )
         }
     ) { padding ->

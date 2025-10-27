@@ -120,7 +120,8 @@ fun ProfileView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Mi Perfil") },
+                title = { Text("Mi Perfil",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
 
                 actions = {
                     if (isEditing) {

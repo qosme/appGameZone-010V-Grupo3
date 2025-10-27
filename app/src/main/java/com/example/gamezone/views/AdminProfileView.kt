@@ -24,19 +24,21 @@ import kotlinx.coroutines.launch
 fun AdminProfileView(
     userEmail: String,
     onNavigateToAddGame: () -> Unit = {},
+    onEditGame: (String) -> Unit,
     vm: AdminProfileViewModel = hiltViewModel()
 ) {
-
-    val games by vm.games.collectAsState(initial = emptyList()) // Delegate for state
-    val isLoading by vm.isLoading.collectAsState(initial = false) // Delegate for loading state
+    val games by vm.games.collectAsState(initial = emptyList())
+    val isLoading by vm.isLoading.collectAsState(initial = false)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    // States to manage the delete dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var gameIdToDelete by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(games) {
         Log.d("AdminProfileView", "Games list updated: ${games.size} items")
     }
-
 
     LaunchedEffect(Unit) {
         if (games.isEmpty()) {
@@ -49,7 +51,8 @@ fun AdminProfileView(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Panel de Administración") }
+                title = { Text("Panel de Administración",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) }
             )
         },
         floatingActionButton = {
@@ -86,7 +89,6 @@ fun AdminProfileView(
                 }
             }
 
-
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -109,7 +111,6 @@ fun AdminProfileView(
                             Text("Agregar Nuevo")
                         }
                     }
-
 
                     if (isLoading) {
                         Box(
@@ -137,12 +138,13 @@ fun AdminProfileView(
                             items(games, key = { it.id }) { game ->
                                 GameManagementCard(
                                     game = game,
-                                    onEdit = { /* editar juego */ },
+                                    onEdit = {
+                                        onEditGame(game.id)
+                                    },
                                     onDelete = { gameId ->
-                                        scope.launch {
-                                            vm.deleteGame(gameId)
-                                            snackbarHostState.showSnackbar("Juego eliminado")
-                                        }
+                                        // Show the delete confirmation dialog
+                                        gameIdToDelete = gameId
+                                        showDeleteDialog = true
                                     },
                                     onToggleAvailability = { gameId, isAvailable ->
                                         scope.launch {
@@ -160,7 +162,40 @@ fun AdminProfileView(
             }
         }
     }
+
+    // Confirmacion para borrar juego
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Confirmar Eliminación") },
+            text = { Text("¿Estás seguro de que quieres eliminar este juego?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // se borra el juego
+                        if (gameIdToDelete != null) {
+                            scope.launch {
+                                vm.deleteGame(gameIdToDelete!!)
+                                snackbarHostState.showSnackbar("Juego eliminado")
+                                showDeleteDialog = false
+                            }
+                        }
+                    }
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
+
 
 
 
