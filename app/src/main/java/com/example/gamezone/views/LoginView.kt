@@ -114,9 +114,9 @@ fun LoginView(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween // Push buttons to left and right
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Left-aligned button
+                //boton izquierdo
                 Button(
                     onClick = { vm.login() },
                     enabled = !isLoading
@@ -124,7 +124,7 @@ fun LoginView(
                     Text(if (isLoading) "Iniciando sesión..." else "Iniciar Sesión")
                 }
 
-                // Right-aligned button
+                // boton derecho
                 OutlinedButton(
                     onClick = { vm.reset() }
                 ) {
