@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,40 +59,24 @@ class CheckoutViewModel @Inject constructor(
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                Log.d("CheckoutViewModel", "Fetching cart for user: $userEmail")
-
-                // Fetch the cart for the user
                 val cart = cartRepository.getCartByUserId(userEmail)
                 if (cart != null) {
-                    // Fetch cart items for the retrieved cart
-                    cartRepository.getCartItemsWithGameInfo(cart.id)
-                        .catch { e ->
-                            Log.e("CheckoutViewModel", "Flow error: ${e.message}", e)
-                            _orderResult.value = "Error al cargar los productos del carrito"
-                        }
-                        .collectLatest { items ->
-                            if (items.isNotEmpty()) {
-                                _cartItems.value = items
-                                _totalAmount.value = items.sumOf { it.price * it.quantity }
-                                Log.d("CheckoutViewModel", "Loaded cart items: $items")
-                            } else {
-                                _orderResult.value = "Carrito vacío"
-                            }
-                        }
+                    val items = cartRepository.getCartItemsWithGameInfo(cart.id).first() // one-time fetch
+                    _cartItems.value = items
+                    _totalAmount.value = items.sumOf { it.price * it.quantity }
+                    Log.d("CheckoutViewModel", "Loaded cart items: $items")
                 } else {
                     _orderResult.value = "No se encontró el carrito para el usuario."
                 }
             } catch (e: Exception) {
-                // Catch any other exceptions (e.g., network or repository errors)
                 Log.e("CheckoutViewModel", "Error al cargar el carrito: ${e.message}", e)
                 _orderResult.value = "Error al cargar el carrito: ${e.message}"
             } finally {
-                // Ensure the loading state is always reset
-                Log.d("CheckoutViewModel", "Setting isLoading to false")
                 _isLoading.value = false
             }
         }
     }
+
 
 
 
@@ -155,16 +142,31 @@ class CheckoutViewModel @Inject constructor(
                     orderItems = cartItems
                 )
 
+                //if (orderId != null) {
+
+                //    cart?.let {
+                //        cartRepository.clearCart(it.id)
+                //    }
+
+                //    _orderResult.value = "Pedido realizado exitosamente. ID: $orderId"
+                //} else {
+                //    _orderResult.value = "Error al procesar el pedido"
+                //}
+
                 if (orderId != null) {
 
-                    cart?.let {
-                        cartRepository.clearCart(it.id)
-                    }
+                    cart?.let { cartRepository.clearCart(it.id) }
+
+
+                    _cartItems.value = emptyList()
+                    _totalAmount.value = 0.0
 
                     _orderResult.value = "Pedido realizado exitosamente. ID: $orderId"
                 } else {
                     _orderResult.value = "Error al procesar el pedido"
                 }
+
+
             } catch (e: Exception) {
                 _orderResult.value = "Error al procesar el pedido: ${e.message}"
             } finally {

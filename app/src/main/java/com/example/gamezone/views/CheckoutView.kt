@@ -1,6 +1,8 @@
 package com.example.gamezone.views
 
 import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,20 +30,25 @@ fun CheckoutView(
     val orderResult = vm.orderResult.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+
+
+    var shippingAddress by remember { mutableStateOf("") }
+    var selectedPaymentMethod by remember { mutableStateOf("") }
 
 
     LaunchedEffect(userEmail) {
-        Log.d("CheckoutView", "Loading cart items for email: $userEmail")
         vm.loadCartItems(userEmail)
     }
 
-
     LaunchedEffect(orderResult) {
         orderResult?.let { result ->
-            Log.d("CheckoutView", "Order result: $result")
             scope.launch {
                 snackbarHostState.showSnackbar(result)
                 if (result.contains("exitoso")) {
+                    shippingAddress = ""
+                    selectedPaymentMethod = ""
+
                     onOrderComplete()
                 }
             }
@@ -48,15 +56,23 @@ fun CheckoutView(
     }
 
 
-    var shippingAddress by remember { mutableStateOf("") }
-    var paymentMethod by remember { mutableStateOf("") }
+    val paymentOptions = listOf(
+        "Webpay",
+        "Mach",
+        "PayPal",
+        "Onepay"
+    )
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Finalizar Compra",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) }
+                title = {
+                    Text(
+                        "Finalizar Compra",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
             )
         }
     ) { padding ->
@@ -73,22 +89,28 @@ fun CheckoutView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(padding)
+                    .padding(16.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { focusManager.clearFocus() },
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
+
                 if (cartItems.isEmpty()) {
-                    Text("No items in the cart.")
+                    Text("No hay juegos en el carro.")
                 } else {
                     cartItems.forEach { item ->
                         Text(
-                            text = "Game: ${item.gameName}, Quantity: ${item.quantity}, Price: $${item.price * item.quantity}",
+                            text = "Juego: ${item.gameName}, Cantidad: ${item.quantity}, Precio: $${String.format("%.0f", item.price * item.quantity)}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
+
 
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -97,7 +119,6 @@ fun CheckoutView(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-
 
                         if (cartItems.isNotEmpty()) {
                             cartItems.forEach { item ->
@@ -117,8 +138,7 @@ fun CheckoutView(
                             }
                         }
 
-                        Text("Total Amount: $${totalAmount}")
-                        Divider()
+                        Divider(modifier = Modifier.padding(vertical = 8.dp))
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -140,9 +160,7 @@ fun CheckoutView(
                 }
 
 
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -164,9 +182,7 @@ fun CheckoutView(
                 }
 
 
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -177,22 +193,34 @@ fun CheckoutView(
                             fontWeight = FontWeight.Bold
                         )
 
-                        OutlinedTextField(
-                            value = paymentMethod,
-                            onValueChange = { paymentMethod = it },
-                            label = { Text("Método de Pago") },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Ej: Tarjeta de Crédito, PayPal, etc.") }
-                        )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            paymentOptions.forEach { option ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .clickable { selectedPaymentMethod = option }
+                                ) {
+                                    Checkbox(
+                                        checked = selectedPaymentMethod == option,
+                                        onCheckedChange = {
+                                            selectedPaymentMethod = if (it) option else ""
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(option)
+                                }
+                            }
+                        }
                     }
                 }
 
 
                 Button(
                     onClick = {
-                        if (shippingAddress.isNotBlank() && paymentMethod.isNotBlank()) {
-
-                            vm.placeOrder(userEmail, shippingAddress, paymentMethod)
+                        if (shippingAddress.isNotBlank() && selectedPaymentMethod.isNotBlank()) {
+                            vm.placeOrder(userEmail, shippingAddress, selectedPaymentMethod)
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar("Por favor completa todos los campos")
@@ -200,7 +228,7 @@ fun CheckoutView(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = cartItems.isNotEmpty() && shippingAddress.isNotBlank() && paymentMethod.isNotBlank()
+                    enabled = cartItems.isNotEmpty() && shippingAddress.isNotBlank() && selectedPaymentMethod.isNotBlank()
                 ) {
                     Text("Confirmar Pedido")
                 }
