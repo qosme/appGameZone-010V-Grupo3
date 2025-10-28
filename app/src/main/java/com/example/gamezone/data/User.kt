@@ -2,10 +2,16 @@ package com.example.gamezone.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Index
 
-@Entity(tableName = "users")
+
+@Entity(
+    tableName = "users",
+    indices = [Index(value = ["email"], unique = true)]
+)
 data class User(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
     val email: String,
     val password: String,
     val name: String,
@@ -16,3 +22,4 @@ data class User(
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )
+

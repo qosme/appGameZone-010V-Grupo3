@@ -234,7 +234,7 @@ private fun GameManagementCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "$${String.format("%.2f", game.price)}",
+                        text = "$${String.format("%.0f", game.price)}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
