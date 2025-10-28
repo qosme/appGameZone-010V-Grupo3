@@ -16,7 +16,7 @@ import android.content.Context
         Order::class,
         OrderItem::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "gamezone_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .fallbackToDestructiveMigration()
                 .build()
                 INSTANCE = instance
@@ -126,6 +126,40 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE users ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT 0")
             }
         }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+            CREATE TABLE IF NOT EXISTS users_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                email TEXT NOT NULL,
+                password TEXT NOT NULL,
+                name TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                profilePictureUri TEXT,
+                isAdmin INTEGER NOT NULL,
+                bio TEXT NOT NULL,
+                createdAt INTEGER NOT NULL,
+                updatedAt INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+                database.execSQL("""
+            INSERT INTO users_new (
+                email, password, name, phone, profilePictureUri,
+                isAdmin, bio, createdAt, updatedAt
+            )
+            SELECT email, password, name, phone, profilePictureUri,
+                   isAdmin, bio, createdAt, updatedAt
+            FROM users
+        """.trimIndent())
+
+                database.execSQL("DROP TABLE users")
+                database.execSQL("ALTER TABLE users_new RENAME TO users")
+                database.execSQL("CREATE UNIQUE INDEX index_users_email ON users (email)")
+            }
+        }
+
 
 
 
