@@ -2,6 +2,7 @@ package com.example.gamezone.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gamezone.data.User
 import com.example.gamezone.data.UserRepository
 import com.example.gamezone.models.UsuarioErrores
 import com.example.gamezone.models.UsuarioUiState
@@ -114,4 +115,7 @@ class UsuarioViewModel @Inject constructor(
         }
     }
 
+    suspend fun getUserByEmail(email: String): User? {
+        return userRepository.getUserByEmail(email)
+    }
 }

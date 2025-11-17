@@ -37,4 +37,7 @@ interface UserDao {
 
     @Query("UPDATE users SET isAdmin = :isAdmin, updatedAt = :updatedAt WHERE email = :email")
     suspend fun updateUserAdminStatus(email: String, isAdmin: Boolean, updatedAt: Long)
+
+    @Query("SELECT COUNT(*) FROM users")
+    suspend fun getUserCount(): Int
 }

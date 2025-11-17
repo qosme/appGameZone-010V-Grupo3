@@ -44,6 +44,9 @@ class UserRepository @Inject constructor(
     //    return user != null
     //}
 
+    suspend fun getUserCount() = userDao.getUserCount()
+
+
     suspend fun validateLogin(email: String, password: String): Boolean {
         // Encontrar usuario por email
         val user = getUserByEmail(email) ?: return false
@@ -58,11 +61,14 @@ class UserRepository @Inject constructor(
         if (existingUser != null) return false
         //hashear clave antes de guardarla
         val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+        val userCount = getUserCount()
+        val isAdmin = userCount == 0
         val newUser = User(
             email = normalizedEmail,
             password = hashedPassword,
             name = name,
-            phone = phone
+            phone = phone,
+            isAdmin = isAdmin
         )
         insertUser(newUser)
         return true

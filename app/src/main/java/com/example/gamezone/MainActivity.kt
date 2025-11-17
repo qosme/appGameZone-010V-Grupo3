@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavType
@@ -25,6 +26,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.gamezone.data.User
+import com.example.gamezone.viewModels.UsuarioViewModel
 import com.example.gamezone.views.AdminProfileView
 import com.example.gamezone.views.CartView
 import com.example.gamezone.views.CheckoutView
@@ -37,6 +41,17 @@ class MainActivity : ComponentActivity() {
             Surface(color = MaterialTheme.colorScheme.background) {
                 val navController = rememberNavController()
                 var loggedInEmail by remember { mutableStateOf<String?>(null) }
+
+                // Obtener UsuarioViewModel por Hilt
+                val usuarioViewModel: UsuarioViewModel = hiltViewModel()
+                var loggedInUser by remember { mutableStateOf<User?>(null) }
+
+                // Cargar usuario con cambio de email
+                LaunchedEffect(loggedInEmail) {
+                    loggedInEmail?.let { email ->
+                        loggedInUser = usuarioViewModel.getUserByEmail(email)
+                    }
+                }
 
                 NavHost(
                     navController = navController,
@@ -65,11 +80,21 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
+                    //composable(Route.MenuShell.route) {
+                    //    MenuShellView(
+                    //        navController = navController,
+                    //        userEmail = loggedInEmail ?: "sin-email@example.com"
+                    //    )
+                    //}
+
                     composable(Route.MenuShell.route) {
-                        MenuShellView(
-                            navController = navController,
-                            userEmail = loggedInEmail ?: "sin-email@example.com"
-                        )
+                        // Solo mostrar menushell cuando este el login hecho
+                        loggedInUser?.let { user ->
+                            MenuShellView(
+                                navController = navController,
+                                user = user
+                            )
+                        }
                     }
                 }
             }
