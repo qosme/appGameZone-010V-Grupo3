@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.example.gamezone.data.User
 import kotlinx.coroutines.launch
 import com.example.gamezone.navigation.Route
 import com.example.gamezone.viewModels.CartViewModel
@@ -19,9 +20,10 @@ import com.example.gamezone.viewModels.CartViewModel
 @Composable
 fun MenuShellView(
     navController: NavController, // Control para logout
-    userEmail: String,
+    user: User,
     cartViewModel: CartViewModel = hiltViewModel() //menushell
 ) {
+    val userEmail = user.email
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val innerNavController = rememberNavController()
@@ -66,11 +68,19 @@ fun MenuShellView(
                     selected = currentInnerRoute(innerNavController) == Route.Cart.route,
                     onClick = { navigateInner(Route.Cart.route) }
                 )
-                NavigationDrawerItem(
-                    label = { Text("Administrador") },
-                    selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
-                    onClick = { navigateInner(Route.AdminProfile.route) }
-                )
+                //NavigationDrawerItem(
+                //    label = { Text("Administrador") },
+                //    selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
+                //    onClick = { navigateInner(Route.AdminProfile.route) }
+                //)
+
+                if (user.isAdmin) {
+                    NavigationDrawerItem(
+                        label = { Text("Administrador") },
+                        selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
+                        onClick = { navigateInner(Route.AdminProfile.route) }
+                    )
+                }
             }
         }
     ) {
@@ -133,25 +143,52 @@ fun MenuShellView(
                     )
                 }
 
+
                 //composable(Route.AdminProfile.route) {
                 //    AdminProfileView(
                 //        userEmail,
-                //        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) }) }
+                //        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) },
+                //        onEditGame = { gameId ->
+                //            innerNavController.navigate(Route.EditGame.createRoute(gameId))  // navegacion a editar juego con el id - segun appnav
+                //        }
+                //    )
+                //}
 
                 composable(Route.AdminProfile.route) {
-                    AdminProfileView(
-                        userEmail,
-                        onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) },
-                        onEditGame = { gameId ->
-                            innerNavController.navigate(Route.EditGame.createRoute(gameId))  // navegacion a editar juego con el id - segun appnav
+                    if (user.isAdmin) {
+                        AdminProfileView(
+                            userEmail = user.email,
+                            onNavigateToAddGame = { innerNavController.navigate(Route.AddGame.route) },
+                            onEditGame = { gameId -> innerNavController.navigate(Route.EditGame.createRoute(gameId)) }
+                        )
+                    } else {
+                        LaunchedEffect(Unit) {
+                            innerNavController.navigate(Route.Bienvenida.route) {
+                                popUpTo(innerNavController.graph.startDestinationId) { inclusive = true }
+                            }
                         }
-                    )
+                    }
                 }
 
+                //composable(Route.AddGame.route) {
+                //    AddGameView(
+                //        onBack = { innerNavController.navigateUp() },
+                //        onGameAdded = { innerNavController.navigateUp() }) }
+
                 composable(Route.AddGame.route) {
-                    AddGameView(
-                        onBack = { innerNavController.navigateUp() },
-                        onGameAdded = { innerNavController.navigateUp() }) }
+                    if (user.isAdmin) {
+                        AddGameView(
+                            onBack = { innerNavController.navigateUp() },
+                            onGameAdded = { innerNavController.navigateUp() }
+                        )
+                    } else {
+                        LaunchedEffect(Unit) {
+                            innerNavController.navigate(Route.Bienvenida.route) {
+                                popUpTo(innerNavController.graph.startDestinationId) { inclusive = true }
+                            }
+                        }
+                    }
+                }
 
                 composable(Route.JuegosDetalle.route) { backStack ->
                     val id = backStack.arguments?.getString("id") ?: ""
