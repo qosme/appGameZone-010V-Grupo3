@@ -76,9 +76,15 @@ fun MenuShellView(
 
                 if (user.isAdmin) {
                     NavigationDrawerItem(
-                        label = { Text("Administrador") },
+                        label = { Text("Administración de Juegos") },
                         selected = currentInnerRoute(innerNavController) == Route.AdminProfile.route,
                         onClick = { navigateInner(Route.AdminProfile.route) }
+                    )
+
+                    NavigationDrawerItem(
+                        label = { Text("Administración de Usuarios") },
+                        selected = currentInnerRoute(innerNavController) == Route.UserList.route,
+                        onClick = { navigateInner(Route.UserList.route) }
                     )
                 }
             }
@@ -180,6 +186,20 @@ fun MenuShellView(
                         AddGameView(
                             onBack = { innerNavController.navigateUp() },
                             onGameAdded = { innerNavController.navigateUp() }
+                        )
+                    } else {
+                        LaunchedEffect(Unit) {
+                            innerNavController.navigate(Route.Bienvenida.route) {
+                                popUpTo(innerNavController.graph.startDestinationId) { inclusive = true }
+                            }
+                        }
+                    }
+                }
+
+                composable(Route.UserList.route) {
+                    if (user.isAdmin) {
+                        UserListView(
+
                         )
                     } else {
                         LaunchedEffect(Unit) {
