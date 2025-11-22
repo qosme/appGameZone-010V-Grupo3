@@ -1,5 +1,6 @@
 package com.example.gamezone.data
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import org.mindrot.jbcrypt.BCrypt
 import java.util.Locale
@@ -8,7 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val api: RestDataSource
 ) {
     suspend fun getUserByCredentials(email: String, password: String): User? {
         return userDao.getUserByCredentials(email, password)
@@ -113,4 +115,28 @@ class UserRepository @Inject constructor(
     fun getAllAdmins(): Flow<List<User>> {
         return userDao.getAllAdmins()
     }
+
+    suspend fun fetchAndSaveApiUsers() {
+        try {
+
+            val apiResponse = api.getUsers() //obtener usuarios de la api
+
+            // mapeo de usuarios api a la base de datos existente
+            val usersToSave = apiResponse.results.map { apiUser ->
+                User(
+                    email = apiUser.email,
+                    password = BCrypt.hashpw(apiUser.login.password, BCrypt.gensalt()),
+                    name = "${apiUser.name.first} ${apiUser.name.last}",
+                    phone = apiUser.phone
+                )
+            }
+
+            // insertar usuarios api en room
+            usersToSave.forEach { insertUser(it) } // or create bulk insert in DAO
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Failed to fetch API users", e)
+        }
+    }
+
+
 }

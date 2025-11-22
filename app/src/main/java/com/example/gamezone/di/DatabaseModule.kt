@@ -11,6 +11,7 @@ import com.example.gamezone.data.CartRepository
 import com.example.gamezone.data.OrderDao
 import com.example.gamezone.data.OrderRepository
 import com.example.gamezone.data.GameDataInitializer
+import com.example.gamezone.data.RestDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,11 +49,18 @@ object DatabaseModule {
         return database.orderDao()
     }
 
+    //@Provides
+    //@Singleton
+    //fun provideUserRepository(userDao: UserDao): UserRepository {
+    //    return UserRepository(userDao)
+    //}
+
     @Provides
     @Singleton
-    fun provideUserRepository(userDao: UserDao): UserRepository {
-        return UserRepository(userDao)
+    fun provideUserRepository(userDao: UserDao, api: RestDataSource): UserRepository {
+        return UserRepository(userDao, api)
     }
+
 
     @Provides
     @Singleton

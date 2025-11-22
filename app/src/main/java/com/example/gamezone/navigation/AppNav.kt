@@ -25,4 +25,6 @@ sealed class Route(val route: String) {
     object JuegosDetalle : Route("menu/juegos/detalle/{id}") {
         fun build(id: String) = "menu/juegos/detalle/$id"
     }
+
+    object UserList : Route("menu/userlist")
 }
