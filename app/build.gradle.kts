@@ -89,11 +89,35 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
 
     // Testing
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.10")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+
+
+    //Hilt Test
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.57.2")
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.57.2")
+
+    //Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+
+    //MockK
+    testImplementation("io.mockk:mockk:1.13.10")
+
+    //Compose UI Test
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.2")
 
     //Hashing
     implementation("org.mindrot:jbcrypt:0.4")
@@ -101,4 +125,10 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+
+
 }
