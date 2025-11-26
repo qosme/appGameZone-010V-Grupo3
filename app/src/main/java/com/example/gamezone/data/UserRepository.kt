@@ -132,11 +132,10 @@ class UserRepository @Inject constructor(
             }
 
             // insertar usuarios api en room
-            usersToSave.forEach { insertUser(it) } // or create bulk insert in DAO
+            usersToSave.forEach { insertUser(it) }
         } catch (e: Exception) {
-            Log.e("UserRepository", "Failed to fetch API users", e)
+            Log.e("UserRepository", "Error al hacer fetching de usuario API", e)
         }
     }
-
 
 }
