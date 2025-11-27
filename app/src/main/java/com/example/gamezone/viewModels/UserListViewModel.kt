@@ -24,4 +24,21 @@ class UserListViewModel @Inject constructor(
             userRepository.fetchAndSaveApiUsers()
         }
     }
+
+
+    fun setAdminStatus(email: String, isAdmin: Boolean) {
+        viewModelScope.launch {
+            val result = if (isAdmin) {
+                userRepository.makeUserAdmin(email)
+            } else {
+                userRepository.removeUserAdmin(email)
+            }
+
+            if (result) {
+
+                userRepository.fetchAndSaveApiUsers()
+            }
+        }
+    }
+
 }
