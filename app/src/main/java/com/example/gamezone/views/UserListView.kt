@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,36 +54,70 @@ fun UserListView(viewModel: UserListViewModel = hiltViewModel()) {
                     shape = RoundedCornerShape(8.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        // Optional: Placeholder for user profile image
-                        Box(
+
+                        // fila de usuario
+                        Row(
                             modifier = Modifier
-                                .size(48.dp)
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
-                        )
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                            // avatar
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        RoundedCornerShape(24.dp)
+                                    )
+                            )
 
-                        Column {
-                            Text(
-                                text = user.name,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = user.email,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            if (user.phone.isNotEmpty()) {
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = user.phone,
-                                    style = MaterialTheme.typography.bodySmall,
+                                    text = user.name,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = user.email,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                if (user.phone.isNotEmpty()) {
+                                    Text(
+                                        text = user.phone,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // toggle para hacer administrador
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Text(
+                                text = if (user.isAdmin) "Administrador" else "Usuario",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            if (user.id != 1L) {
+                                Switch(
+                                    checked = user.isAdmin,
+                                    onCheckedChange = { newStatus ->
+                                        viewModel.setAdminStatus(user.email, newStatus)
+                                    }
                                 )
                             }
                         }
